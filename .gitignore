@@ -1,5 +1,5 @@
 # build output
-dist/
+# dist/  # included for Hostinger shared deploy
 # generated types
 .astro/
 

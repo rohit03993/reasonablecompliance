@@ -1,0 +1,23 @@
+/* Soften Decap chrome — limited but helps feel less clinical */
+body {
+  font-family: 'DM Sans', system-ui, sans-serif !important;
+}
+
+/* Top app bar */
+[class*='AppHeader'],
+header[class*='Header'] {
+  background: #0a2540 !important;
+}
+
+/* Make collection cards feel cleaner on dashboard */
+[class*='Card-CardContainer'],
+[class*='CardContainer'] {
+  border-radius: 12px !important;
+  overflow: hidden;
+}
+
+/* Editor sidebar labels */
+label,
+[class*='FieldLabel'] {
+  letter-spacing: 0.02em !important;
+}
