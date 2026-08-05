@@ -1,0 +1,33 @@
+---
+import faqsData from '../data/faqs.json';
+
+const sorted = [...faqsData.items].sort((a, b) => a.order - b.order);
+---
+
+<section class="section-pad bg-surface" id="faq">
+  <div class="container-rc max-w-3xl">
+    <div class="reveal">
+      <p class="text-sm font-semibold uppercase tracking-wider text-emerald">FAQ</p>
+      <h2 class="mt-2 text-3xl font-bold sm:text-4xl">Frequently asked questions</h2>
+    </div>
+
+    <div class="mt-10 divide-y divide-navy/10 border-y border-navy/10">
+      {
+        sorted.map((faq, index) => (
+          <details class="faq-item group reveal py-1" open={index === 0}>
+            <summary class="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 py-4 text-left font-semibold text-navy marker:content-none [&::-webkit-details-marker]:hidden">
+              <span>{faq.question}</span>
+              <span
+                class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-navy/15 text-emerald transition group-open:rotate-45"
+                aria-hidden="true"
+              >
+                +
+              </span>
+            </summary>
+            <p class="pb-5 pr-10 text-sm leading-relaxed text-muted sm:text-base">{faq.answer}</p>
+          </details>
+        ))
+      }
+    </div>
+  </div>
+</section>

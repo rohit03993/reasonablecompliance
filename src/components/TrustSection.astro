@@ -1,0 +1,38 @@
+---
+import homepage from '../data/homepage.json';
+
+const { trustTitle, trustBullets, whyChooseTitle, whyChooseBullets } = homepage;
+---
+
+<section class="section-pad bg-surface-alt" id="why-us">
+  <div class="container-rc grid gap-14 lg:grid-cols-2">
+    <div class="reveal">
+      <p class="text-sm font-semibold uppercase tracking-wider text-emerald">Trust</p>
+      <h2 class="mt-2 text-3xl font-bold sm:text-4xl">{trustTitle}</h2>
+      <ul class="mt-8 space-y-3">
+        {
+          trustBullets.map((item) => (
+            <li class="flex gap-3 text-sm leading-relaxed sm:text-base">
+              <span class="mt-1.5 inline-block h-2 w-2 shrink-0 rounded-full bg-emerald" aria-hidden="true" />
+              <span>{item}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+    <div class="reveal">
+      <p class="text-sm font-semibold uppercase tracking-wider text-emerald">Partnership</p>
+      <h2 class="mt-2 text-3xl font-bold sm:text-4xl">{whyChooseTitle}</h2>
+      <ul class="mt-8 space-y-3">
+        {
+          whyChooseBullets.map((item) => (
+            <li class="flex gap-3 text-sm leading-relaxed sm:text-base">
+              <span class="mt-1.5 inline-block h-2 w-2 shrink-0 rounded-full bg-emerald" aria-hidden="true" />
+              <span>{item}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+</section>

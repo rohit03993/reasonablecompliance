@@ -1,0 +1,117 @@
+---
+import site from '../data/site.json';
+
+const pathname = Astro.url.pathname;
+
+const links = [
+  { href: '/', label: 'Home' },
+  { href: '/about', label: 'About' },
+  { href: '/services', label: 'Services' },
+  { href: '/contact', label: 'Contact' },
+];
+
+function isActive(href: string) {
+  if (href === '/') return pathname === '/';
+  return pathname.startsWith(href);
+}
+---
+
+<header class="sticky top-0 z-40 border-b border-navy/10 bg-white/95 backdrop-blur-md">
+  <div class="container-rc flex h-[4.75rem] items-center justify-between gap-4 sm:h-[5.25rem]">
+    <a href="/" class="group flex min-w-0 shrink-0 items-center">
+      {
+        site.logo ? (
+          <img
+            src={site.logo}
+            alt={site.siteName}
+            class="h-[3.25rem] w-auto max-w-[220px] object-contain object-left sm:h-[3.75rem] sm:max-w-[280px]"
+            width="280"
+            height="60"
+          />
+        ) : (
+          <span class="flex min-w-0 flex-col leading-tight">
+            <span class="truncate font-display text-lg font-bold tracking-tight text-navy sm:text-xl">
+              {site.siteName}
+            </span>
+            <span class="hidden text-[0.7rem] font-medium tracking-wide text-emerald sm:block">
+              {site.tagline}
+            </span>
+          </span>
+        )
+      }
+    </a>
+
+    <nav class="hidden items-center gap-1 md:flex" aria-label="Primary">
+      {
+        links.map((link) => (
+          <a
+            href={link.href}
+            class:list={[
+              'rounded-md px-3 py-2 text-sm font-medium transition',
+              isActive(link.href)
+                ? 'text-emerald'
+                : 'text-navy/70 hover:text-navy',
+            ]}
+            aria-current={isActive(link.href) ? 'page' : undefined}
+          >
+            {link.label}
+          </a>
+        ))
+      }
+      <a href="/contact" class="btn-primary ml-2">{site.ctaPrimary}</a>
+    </nav>
+
+    <button
+      type="button"
+      id="nav-toggle"
+      class="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md border border-navy/15 text-navy md:hidden"
+      aria-expanded="false"
+      aria-controls="mobile-nav"
+      aria-label="Open menu"
+    >
+      <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round"></path>
+      </svg>
+    </button>
+  </div>
+
+  <div id="mobile-nav" class="hidden border-t border-navy/10 bg-white md:hidden" hidden>
+    <nav class="container-rc flex flex-col gap-1 py-3" aria-label="Mobile">
+      {
+        links.map((link) => (
+          <a
+            href={link.href}
+            class:list={[
+              'rounded-md px-3 py-3 text-base font-medium',
+              isActive(link.href) ? 'bg-surface-alt text-emerald' : 'text-navy',
+            ]}
+          >
+            {link.label}
+          </a>
+        ))
+      }
+      <a href="/contact" class="btn-primary mt-2 w-full">{site.ctaPrimary}</a>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const toggle = document.getElementById('nav-toggle');
+  const panel = document.getElementById('mobile-nav');
+  if (toggle && panel) {
+    toggle.addEventListener('click', () => {
+      const open = panel.hasAttribute('hidden');
+      if (open) {
+        panel.removeAttribute('hidden');
+        panel.classList.remove('hidden');
+        toggle.setAttribute('aria-expanded', 'true');
+        toggle.setAttribute('aria-label', 'Close menu');
+      } else {
+        panel.setAttribute('hidden', '');
+        panel.classList.add('hidden');
+        toggle.setAttribute('aria-expanded', 'false');
+        toggle.setAttribute('aria-label', 'Open menu');
+      }
+    });
+  }
+</script>

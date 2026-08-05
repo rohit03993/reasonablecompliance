@@ -1,0 +1,17 @@
+{
+  "name": "Reasonable Compliance",
+  "short_name": "RC Compliance",
+  "description": "Corporate legal and regulatory compliance solutions for businesses across India.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0A2540",
+  "theme_color": "#0A2540",
+  "icons": [
+    {
+      "src": "/images/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

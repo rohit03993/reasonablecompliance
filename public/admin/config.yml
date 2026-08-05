@@ -1,0 +1,154 @@
+backend:
+  name: git-gateway
+  branch: main
+
+local_backend: true
+
+media_folder: public/images
+public_folder: /images
+
+site_url: https://reasonablecompliance.com
+display_url: https://reasonablecompliance.com
+logo_url: /images/logo.png
+
+collections:
+  - name: settings
+    label: Brand & Contact
+    label_singular: Setting
+    description: Logo, phone, WhatsApp, email and button labels
+    files:
+      - name: site
+        label: Brand & Contact
+        file: src/data/site.json
+        fields:
+          - { label: Site Name, name: siteName, widget: string }
+          - { label: Tagline, name: tagline, widget: string }
+          - { label: Logo, name: logo, widget: image, required: false, hint: "PNG or SVG. Leave empty to show the text name." }
+          - { label: Email, name: email, widget: string }
+          - { label: Phone, name: phone, widget: string, hint: "+919876543210" }
+          - { label: WhatsApp number, name: whatsapp, widget: string, hint: "919876543210 (digits only, with country code)" }
+          - { label: Web3Forms Access Key, name: web3formsAccessKey, widget: string, hint: "From https://web3forms.com — emails go to your inbox" }
+          - { label: Primary button text, name: ctaPrimary, widget: string }
+          - { label: Secondary button text, name: ctaSecondary, widget: string }
+          - { label: SEO title (default), name: seoDefaultTitle, widget: string }
+          - { label: SEO description (default), name: seoDefaultDescription, widget: text }
+
+  - name: pages
+    label: Website Pages
+    label_singular: Page
+    description: Edit homepage, about and contact copy
+    files:
+      - name: homepage
+        label: Homepage
+        file: src/data/homepage.json
+        fields:
+          - label: Hero section
+            name: hero
+            widget: object
+            summary: "{{fields.headline}}"
+            fields:
+              - { label: Main headline, name: headline, widget: string }
+              - { label: Supporting line, name: subheadline, widget: text }
+              - { label: Short intro paragraph, name: intro, widget: text }
+          - { label: Trust section title, name: trustTitle, widget: string }
+          - label: Trust points
+            name: trustBullets
+            widget: list
+            summary: "{{fields.item}}"
+            field: { label: Point, name: item, widget: string }
+            allow_add: true
+          - { label: Why choose us — title, name: whyChooseTitle, widget: string }
+          - label: Why choose us — points
+            name: whyChooseBullets
+            widget: list
+            field: { label: Point, name: item, widget: string }
+          - { label: Industries — title, name: industriesTitle, widget: string }
+          - { label: Industries — intro, name: industriesIntro, widget: string }
+          - label: Industries list
+            name: industries
+            widget: list
+            field: { label: Industry, name: industry, widget: string }
+          - { label: Process — title, name: processTitle, widget: string }
+          - label: Process steps
+            name: processSteps
+            widget: list
+            summary: "{{fields.title}}"
+            fields:
+              - { label: Step title, name: title, widget: string }
+              - { label: Step description, name: description, widget: text }
+          - label: Bottom call-to-action
+            name: finalCta
+            widget: object
+            fields:
+              - { label: Headline, name: headline, widget: string }
+              - { label: Supporting text, name: text, widget: text }
+
+      - name: about
+        label: About page
+        file: src/data/about.json
+        fields:
+          - { label: Page title, name: title, widget: string }
+          - { label: SEO title, name: seoTitle, widget: string }
+          - { label: SEO description, name: seoDescription, widget: text }
+          - label: About paragraphs
+            name: paragraphs
+            widget: list
+            field: { label: Paragraph, name: paragraph, widget: text }
+          - { label: Why choose us — title, name: whyChooseTitle, widget: string }
+          - label: Why choose us — points
+            name: whyChooseBullets
+            widget: list
+            field: { label: Point, name: item, widget: string }
+
+      - name: contact
+        label: Contact page
+        file: src/data/contact.json
+        fields:
+          - { label: Page headline, name: headline, widget: string }
+          - { label: Supporting text, name: supportingText, widget: text }
+          - { label: Success message after form submit, name: formSuccessMessage, widget: string }
+          - { label: SEO title, name: seoTitle, widget: string }
+          - { label: SEO description, name: seoDescription, widget: text }
+
+  - name: services
+    label: Services
+    label_singular: Service
+    description: Service titles, summaries and bullet lists
+    files:
+      - name: services
+        label: All services
+        file: src/data/services.json
+        fields:
+          - label: Services
+            name: items
+            widget: list
+            summary: "{{fields.title}}"
+            fields:
+              - { label: URL slug, name: slug, widget: string, hint: "e.g. company-incorporation" }
+              - { label: Service title, name: title, widget: string }
+              - { label: Short summary, name: summary, widget: text }
+              - { label: SEO title, name: seoTitle, widget: string }
+              - { label: SEO description, name: seoDescription, widget: text }
+              - { label: Display order, name: order, widget: number, value_type: int }
+              - label: Included items
+                name: bullets
+                widget: list
+                field: { label: Item, name: bullet, widget: string }
+
+  - name: faqs
+    label: FAQs
+    label_singular: FAQ
+    description: Questions shown on the homepage
+    files:
+      - name: faqs
+        label: All FAQs
+        file: src/data/faqs.json
+        fields:
+          - label: FAQs
+            name: items
+            widget: list
+            summary: "{{fields.question}}"
+            fields:
+              - { label: Question, name: question, widget: string }
+              - { label: Answer, name: answer, widget: text }
+              - { label: Display order, name: order, widget: number, value_type: int }

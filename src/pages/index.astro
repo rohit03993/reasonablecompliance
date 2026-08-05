@@ -1,0 +1,24 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import ServicesOverview from '../components/ServicesOverview.astro';
+import TrustSection from '../components/TrustSection.astro';
+import Industries from '../components/Industries.astro';
+import Process from '../components/Process.astro';
+import FAQ from '../components/FAQ.astro';
+import FinalCTA from '../components/FinalCTA.astro';
+import site from '../data/site.json';
+---
+
+<BaseLayout
+  title={site.seoDefaultTitle}
+  description={site.seoDefaultDescription}
+>
+  <Hero />
+  <ServicesOverview />
+  <TrustSection />
+  <Industries />
+  <Process />
+  <FAQ />
+  <FinalCTA />
+</BaseLayout>

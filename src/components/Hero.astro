@@ -1,0 +1,31 @@
+---
+import site from '../data/site.json';
+import homepage from '../data/homepage.json';
+
+const { hero } = homepage;
+---
+
+<section class="hero-atmosphere relative overflow-hidden text-white">
+  <div class="hero-grid pointer-events-none absolute inset-0" aria-hidden="true"></div>
+  <div class="container-rc relative flex min-h-[calc(100svh-5rem)] flex-col justify-center py-16 sm:py-20 lg:py-24">
+    <p class="fade-up font-display text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">
+      {site.siteName}
+    </p>
+    <h1 class="fade-up-delay-1 mt-5 max-w-3xl font-display text-2xl font-semibold leading-snug !text-white sm:text-3xl lg:text-4xl">
+      {hero.headline}
+    </h1>
+    <p class="fade-up-delay-2 mt-4 max-w-2xl text-base leading-relaxed text-white/80 sm:text-lg">
+      {hero.subheadline}
+    </p>
+    <p class="mt-6 max-w-2xl text-sm leading-relaxed text-white/65 sm:text-base">
+      {hero.intro}
+    </p>
+    <p class="mt-6 text-sm font-semibold tracking-wide text-emerald sm:text-base">
+      {site.tagline}
+    </p>
+    <div class="mt-8 flex flex-wrap gap-3">
+      <a href="/contact" class="btn-primary">{site.ctaPrimary}</a>
+      <a href="/contact" class="btn-secondary">{site.ctaSecondary}</a>
+    </div>
+  </div>
+</section>

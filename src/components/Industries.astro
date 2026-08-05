@@ -1,0 +1,24 @@
+---
+import homepage from '../data/homepage.json';
+
+const { industriesTitle, industriesIntro, industries } = homepage;
+---
+
+<section class="section-pad bg-surface" id="industries">
+  <div class="container-rc">
+    <div class="reveal max-w-2xl">
+      <p class="text-sm font-semibold uppercase tracking-wider text-emerald">Industries</p>
+      <h2 class="mt-2 text-3xl font-bold sm:text-4xl">{industriesTitle}</h2>
+      <p class="mt-3 text-muted">{industriesIntro}</p>
+    </div>
+    <ul class="reveal mt-10 flex flex-wrap gap-3">
+      {
+        industries.map((industry) => (
+          <li class="rounded-full border border-navy/15 bg-white px-4 py-2 text-sm font-medium text-navy">
+            {industry}
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>

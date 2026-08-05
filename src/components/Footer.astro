@@ -1,0 +1,69 @@
+---
+import site from '../data/site.json';
+---
+
+<footer class="border-t border-navy/10 bg-navy text-white">
+  <div class="container-rc section-pad !py-14">
+    <div class="grid gap-10 md:grid-cols-3">
+      <div class="md:col-span-1">
+        {
+          site.logo ? (
+            <div class="inline-flex rounded-lg bg-white px-3 py-2">
+              <img
+                src={site.logo}
+                alt={site.siteName}
+                class="h-14 w-auto max-w-[220px] object-contain"
+                width="220"
+                height="56"
+              />
+            </div>
+          ) : (
+            <p class="font-display text-2xl font-bold">{site.siteName}</p>
+          )
+        }
+        <p class="mt-2 text-sm text-white/70">{site.tagline}</p>
+        <p class="mt-4 max-w-sm text-sm leading-relaxed text-white/65">
+          Professional corporate compliance, company secretary services, ROC filing,
+          company registration, GST and legal advisory for businesses across India.
+        </p>
+      </div>
+
+      <div>
+        <p class="text-sm font-semibold uppercase tracking-wider text-emerald">Explore</p>
+        <ul class="mt-4 space-y-2 text-sm text-white/75">
+          <li><a class="hover:text-white" href="/about">About</a></li>
+          <li><a class="hover:text-white" href="/services">Services</a></li>
+          <li><a class="hover:text-white" href="/contact">Contact</a></li>
+          <li><a class="hover:text-white" href="/privacy">Privacy</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <p class="text-sm font-semibold uppercase tracking-wider text-emerald">Get in touch</p>
+        <ul class="mt-4 space-y-3 text-sm text-white/75">
+          <li>
+            <a class="hover:text-white" href={`mailto:${site.email}`}>{site.email}</a>
+          </li>
+          {
+            !site.phone.includes('X') && (
+              <li>
+                <a class="hover:text-white" href={`tel:${site.phone.replace(/\s/g, '')}`}>
+                  {site.phone}
+                </a>
+              </li>
+            )
+          }
+          <li>
+            <a class="btn-primary mt-2 inline-flex" href="/contact">{site.ctaPrimary}</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="mt-12 border-t border-white/10 pt-6 text-xs text-white/50">
+      <p>
+        &copy; {new Date().getFullYear()} {site.siteName}. All rights reserved.
+      </p>
+    </div>
+  </div>
+</footer>

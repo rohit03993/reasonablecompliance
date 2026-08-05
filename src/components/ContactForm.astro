@@ -1,0 +1,158 @@
+---
+import contact from '../data/contact.json';
+import site from '../data/site.json';
+
+const accessKey = site.web3formsAccessKey || '';
+const hasKey = Boolean(accessKey && !accessKey.includes('YOUR_'));
+---
+
+<form
+  name="consultation"
+  method="POST"
+  action="https://api.web3forms.com/submit"
+  class="space-y-5 rounded-xl border border-navy/10 bg-white p-6 shadow-sm sm:p-8"
+  id="consultation-form"
+>
+  <input type="hidden" name="access_key" value={accessKey} />
+  <input type="hidden" name="subject" value="New consultation request — Reasonable Compliance" />
+  <input type="hidden" name="from_name" value="Reasonable Compliance Website" />
+  <input type="checkbox" name="botcheck" class="hidden" style="display: none" tabindex="-1" autocomplete="off" />
+
+  {
+    !hasKey && (
+      <p class="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+        Form email is not connected yet. Add your Web3Forms access key in
+        <code class="font-semibold">src/data/site.json</code> → <code class="font-semibold">web3formsAccessKey</code>.
+      </p>
+    )
+  }
+
+  <div>
+    <label for="name" class="mb-1.5 block text-sm font-medium text-navy">Full name</label>
+    <input
+      id="name"
+      name="name"
+      type="text"
+      required
+      autocomplete="name"
+      class="min-h-11 w-full rounded-md border border-navy/15 bg-surface px-3 text-sm outline-none transition focus:border-emerald focus:ring-2 focus:ring-emerald/20"
+    />
+  </div>
+
+  <div class="grid gap-5 sm:grid-cols-2">
+    <div>
+      <label for="email" class="mb-1.5 block text-sm font-medium text-navy">Email</label>
+      <input
+        id="email"
+        name="email"
+        type="email"
+        required
+        autocomplete="email"
+        class="min-h-11 w-full rounded-md border border-navy/15 bg-surface px-3 text-sm outline-none transition focus:border-emerald focus:ring-2 focus:ring-emerald/20"
+      />
+    </div>
+    <div>
+      <label for="phone" class="mb-1.5 block text-sm font-medium text-navy">Phone</label>
+      <input
+        id="phone"
+        name="phone"
+        type="tel"
+        required
+        autocomplete="tel"
+        class="min-h-11 w-full rounded-md border border-navy/15 bg-surface px-3 text-sm outline-none transition focus:border-emerald focus:ring-2 focus:ring-emerald/20"
+      />
+    </div>
+  </div>
+
+  <div>
+    <label for="businessType" class="mb-1.5 block text-sm font-medium text-navy">Business type</label>
+    <select
+      id="businessType"
+      name="businessType"
+      required
+      class="min-h-11 w-full rounded-md border border-navy/15 bg-surface px-3 text-sm outline-none transition focus:border-emerald focus:ring-2 focus:ring-emerald/20"
+    >
+      <option value="">Select…</option>
+      <option>Startup</option>
+      <option>Private Limited Company</option>
+      <option>LLP</option>
+      <option>OPC</option>
+      <option>Partnership</option>
+      <option>Established Enterprise</option>
+      <option>Other</option>
+    </select>
+  </div>
+
+  <div>
+    <label for="message" class="mb-1.5 block text-sm font-medium text-navy">How can we help?</label>
+    <textarea
+      id="message"
+      name="message"
+      rows="4"
+      required
+      class="w-full rounded-md border border-navy/15 bg-surface px-3 py-2.5 text-sm outline-none transition focus:border-emerald focus:ring-2 focus:ring-emerald/20"
+    ></textarea>
+  </div>
+
+  <button type="submit" class="btn-primary w-full sm:w-auto" id="form-submit">Send message</button>
+  <p id="form-success" class="hidden text-sm font-medium text-emerald" role="status">
+    {contact.formSuccessMessage}
+  </p>
+  <p id="form-error" class="hidden text-sm font-medium text-red-700" role="alert">
+    Something went wrong. Please email us directly or try again.
+  </p>
+</form>
+
+<script>
+  const form = document.getElementById('consultation-form') as HTMLFormElement | null;
+  const success = document.getElementById('form-success');
+  const error = document.getElementById('form-error');
+  const submitBtn = document.getElementById('form-submit') as HTMLButtonElement | null;
+
+  if (form && success && error) {
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      error.classList.add('hidden');
+      success.classList.add('hidden');
+      if (submitBtn) submitBtn.disabled = true;
+
+      const accessKeyInput = form.querySelector('input[name="access_key"]') as HTMLInputElement | null;
+      const key = accessKeyInput?.value?.trim() || '';
+
+      if (!key || key.includes('YOUR_')) {
+        error.textContent =
+          'Form is not connected yet. Add your Web3Forms access key, then rebuild and upload.';
+        error.classList.remove('hidden');
+        if (submitBtn) submitBtn.disabled = false;
+        return;
+      }
+
+      try {
+        const formData = new FormData(form);
+        const payload = Object.fromEntries(formData.entries());
+
+        const response = await fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          },
+          body: JSON.stringify(payload),
+        });
+
+        const result = await response.json();
+        if (!response.ok || result.success === false) {
+          throw new Error(result.message || 'Submit failed');
+        }
+
+        success.classList.remove('hidden');
+        form.reset();
+      } catch {
+        error.textContent = 'Something went wrong. Please email us directly or try again.';
+        error.classList.remove('hidden');
+      } finally {
+        if (submitBtn) submitBtn.disabled = false;
+      }
+    });
+  }
+</script>

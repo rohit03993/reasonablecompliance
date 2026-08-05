@@ -1,0 +1,115 @@
+@import "tailwindcss";
+@import "@fontsource/dm-sans/400.css";
+@import "@fontsource/dm-sans/500.css";
+@import "@fontsource/dm-sans/600.css";
+@import "@fontsource/dm-sans/700.css";
+@import "@fontsource/fraunces/600.css";
+@import "@fontsource/fraunces/700.css";
+
+@theme {
+  --color-navy: #0a2540;
+  --color-navy-light: #143552;
+  --color-emerald: #0d9488;
+  --color-emerald-dark: #0f766e;
+  --color-surface: #f8fafc;
+  --color-surface-alt: #e8eef4;
+  --color-text: #1e293b;
+  --color-muted: #64748b;
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Fraunces", ui-serif, Georgia, serif;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-surface font-sans text-text antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display text-navy;
+  }
+
+  ::selection {
+    @apply bg-emerald/20 text-navy;
+  }
+}
+
+@layer utilities {
+  .container-rc {
+    @apply mx-auto w-full max-w-6xl px-5 sm:px-6 lg:px-8;
+  }
+
+  .btn-primary {
+    @apply inline-flex min-h-11 items-center justify-center rounded-md bg-emerald px-5 py-2.5 text-sm font-semibold text-white transition duration-200 hover:bg-emerald-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald;
+  }
+
+  .btn-secondary {
+    @apply inline-flex min-h-11 items-center justify-center rounded-md border border-white/40 bg-white/10 px-5 py-2.5 text-sm font-semibold text-white backdrop-blur-sm transition duration-200 hover:bg-white/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white;
+  }
+
+  .btn-outline {
+    @apply inline-flex min-h-11 items-center justify-center rounded-md border border-navy/20 bg-white px-5 py-2.5 text-sm font-semibold text-navy transition duration-200 hover:border-emerald hover:text-emerald focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald;
+  }
+
+  .section-pad {
+    @apply py-16 sm:py-20 lg:py-24;
+  }
+
+  .fade-up {
+    animation: fadeUp 0.7s ease-out both;
+  }
+
+  .fade-up-delay-1 {
+    animation: fadeUp 0.7s ease-out 0.12s both;
+  }
+
+  .fade-up-delay-2 {
+    animation: fadeUp 0.7s ease-out 0.24s both;
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(16px);
+    transition:
+      opacity 0.6s ease,
+      transform 0.6s ease;
+  }
+
+  .reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Hero atmosphere */
+.hero-atmosphere {
+  background:
+    radial-gradient(ellipse 80% 60% at 70% 20%, rgba(13, 148, 136, 0.28), transparent 55%),
+    radial-gradient(ellipse 50% 40% at 15% 80%, rgba(13, 148, 136, 0.12), transparent 50%),
+    linear-gradient(145deg, #0a2540 0%, #0d3a5c 45%, #0a2540 100%);
+}
+
+.hero-grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+}

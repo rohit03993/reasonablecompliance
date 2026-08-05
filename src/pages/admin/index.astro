@@ -1,0 +1,5 @@
+---
+// Astro was stripping Decap <script> tags from the page component.
+// Serve the real admin from static public/admin/index.html instead.
+return Astro.redirect('/admin/index.html');
+---

@@ -1,0 +1,22 @@
+---
+import site from '../data/site.json';
+import homepage from '../data/homepage.json';
+
+const { finalCta } = homepage;
+---
+
+<section class="section-pad bg-surface-alt" id="consult">
+  <div class="container-rc reveal text-center">
+    <h2 class="text-3xl font-bold sm:text-4xl">{finalCta.headline}</h2>
+    <p class="mx-auto mt-4 max-w-2xl text-muted">{finalCta.text}</p>
+    <p class="mt-6">
+      <a class="font-semibold text-emerald hover:text-emerald-dark" href={`mailto:${site.email}`}>
+        {site.email}
+      </a>
+    </p>
+    <div class="mt-8 flex flex-wrap justify-center gap-3">
+      <a href="/contact" class="btn-primary">Book Your Consultation Today</a>
+      <a href="/services" class="btn-outline">Explore Services</a>
+    </div>
+  </div>
+</section>

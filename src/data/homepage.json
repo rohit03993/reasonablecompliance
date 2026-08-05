@@ -1,0 +1,62 @@
+{
+  "hero": {
+    "headline": "End-to-End Corporate Legal & Regulatory Compliance Solutions",
+    "subheadline": "Helping Startups, SMEs & Growing Businesses Stay Compliant and Scale with Confidence",
+    "intro": "Reasonable Compliance is a professional corporate legal and compliance consultancy dedicated to providing reliable, timely, and practical solutions for businesses across India. From business incorporation to ongoing regulatory compliance, we simplify legal complexities so you can focus on growing your business."
+  },
+  "trustTitle": "Why Businesses Trust Reasonable Compliance",
+  "trustBullets": [
+    "Experienced Corporate Compliance Professionals",
+    "Client-Centric Approach",
+    "Affordable & Transparent Pricing",
+    "Timely Regulatory Support",
+    "End-to-End Compliance Management",
+    "Strong Focus on Business Growth"
+  ],
+  "whyChooseTitle": "Why Choose Us?",
+  "whyChooseBullets": [
+    "Professional and Reliable Advice",
+    "Timely Compliance Management",
+    "End-to-End Corporate Solutions",
+    "Transparent Process",
+    "Startup-Friendly Approach",
+    "Dedicated Client Support"
+  ],
+  "industriesTitle": "Industries We Serve",
+  "industriesIntro": "We proudly support businesses across diverse industries, including:",
+  "industries": [
+    "Startups",
+    "IT & Technology",
+    "Manufacturing",
+    "Healthcare",
+    "Education",
+    "E-commerce",
+    "Food & Hospitality",
+    "Professional Services",
+    "Real Estate",
+    "Consultancy Firms"
+  ],
+  "processTitle": "Our Process",
+  "processSteps": [
+    {
+      "title": "Understanding Your Business",
+      "description": "We evaluate your business requirements and compliance obligations."
+    },
+    {
+      "title": "Compliance Planning",
+      "description": "Our experts prepare a customized compliance roadmap."
+    },
+    {
+      "title": "Execution",
+      "description": "We handle registrations, documentation, filings, and regulatory procedures."
+    },
+    {
+      "title": "Ongoing Support",
+      "description": "Continuous compliance monitoring and advisory to keep your business legally secure."
+    }
+  ],
+  "finalCta": {
+    "headline": "Let's Build a Compliant Business Together",
+    "text": "Whether you're starting a new venture or looking for reliable compliance support, we're here to help."
+  }
+}
