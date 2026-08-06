@@ -1,4 +1,10 @@
-# Prevent script execution in content data folder
-<FilesMatch "\.(php|phtml|php3|php4|php5|phar)$">
-  Require all denied
-</FilesMatch>
+# Prevent browsers/CDN from serving stale content JSON
+<IfModule mod_headers.c>
+  Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
+  Header set Pragma "no-cache"
+  Header set Expires "0"
+</IfModule>
+
+<IfModule mod_expires.c>
+  ExpiresActive Off
+</IfModule>

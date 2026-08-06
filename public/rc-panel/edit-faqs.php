@@ -2,11 +2,18 @@
 require __DIR__ . '/auth.php';
 manage_require_login();
 $navCurrent = 'faqs';
-$faqs = manage_read_json('faqs.json');
-$items = $faqs['items'] ?? [];
+$faqs = manage_ensure_content('faqs', 'faqs.json');
+$items = [];
+foreach (($faqs['items'] ?? []) as $item) {
+    if (is_array($item) && trim((string) ($item['question'] ?? '')) !== '') {
+        $items[] = $item;
+    }
+}
+usort($items, fn($a, $b) => ((int) ($a['order'] ?? 0)) <=> ((int) ($b['order'] ?? 0)));
 while (count($items) < 4) {
     $items[] = ['question' => '', 'answer' => '', 'order' => count($items) + 1];
 }
+$saved = ($_GET['saved'] ?? '') === '1';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -21,7 +28,20 @@ while (count($items) < 4) {
   <div class="layout">
     <?php require __DIR__ . '/partials/nav.php'; ?>
     <main class="main">
-      <h1>FAQs</h1>
+      <div class="page-head">
+        <div>
+          <h1>FAQs</h1>
+          <p class="help" style="margin:0">Same FAQs shown on the homepage.</p>
+        </div>
+        <form class="inline-form" method="post" action="/rc-panel/save.php" onsubmit="return confirm('Reload FAQs from packaged website content?');">
+          <input type="hidden" name="type" value="content_reload" />
+          <input type="hidden" name="key" value="faqs" />
+          <button type="submit" class="btn secondary">Repair / re-sync</button>
+        </form>
+      </div>
+
+      <?php if ($saved): ?><p class="success">FAQs saved.</p><?php endif; ?>
+
       <form method="post" action="/rc-panel/save.php">
         <input type="hidden" name="type" value="faqs" />
         <?php foreach ($items as $i => $item): ?>

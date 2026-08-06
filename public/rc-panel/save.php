@@ -40,6 +40,7 @@ switch ($type) {
             'seoDefaultDescription' => trim((string) ($_POST['seoDefaultDescription'] ?? '')),
         ];
         manage_write_json('site.json', $data);
+        manage_bump_cache();
         break;
 
     case 'homepage':
@@ -264,6 +265,7 @@ switch ($type) {
             'intro' => trim((string) ($_POST['intro'] ?? '')),
             'items' => manage_blog_valid_items($current['items'] ?? []),
         ]);
+        manage_bump_cache();
         header('Location: /rc-panel/edit-blog.php?saved=1');
         exit;
 
@@ -315,6 +317,7 @@ switch ($type) {
             'intro' => $current['intro'] ?? '',
             'items' => $next,
         ]);
+        manage_bump_cache();
         header('Location: /rc-panel/edit-blog.php?saved=1');
         exit;
 
@@ -330,46 +333,62 @@ switch ($type) {
             'intro' => $current['intro'] ?? '',
             'items' => $items,
         ]);
+        manage_bump_cache();
         header('Location: /rc-panel/edit-blog.php?deleted=1');
         exit;
 
     case 'blog_repair':
-        $current = manage_read_json('blog.json');
-        $seedPath = __DIR__ . '/seed/blog.json';
-        $seedRaw = is_file($seedPath) ? (string) file_get_contents($seedPath) : '';
-        if (strncmp($seedRaw, "\xEF\xBB\xBF", 3) === 0) {
-            $seedRaw = substr($seedRaw, 3);
+    case 'content_reload':
+        $key = trim((string) ($_POST['key'] ?? ''));
+        if ($type === 'blog_repair') {
+            $key = 'blog';
         }
-        $seed = json_decode($seedRaw, true);
-        if (!is_array($seed) || !isset($seed['items']) || !is_array($seed['items'])) {
-            header('Location: /rc-panel/edit-blog.php?error=1');
+        $map = [
+            'blog' => 'blog.json',
+            'services' => 'services.json',
+            'faqs' => 'faqs.json',
+            'testimonials' => 'testimonials.json',
+            'gallery' => 'gallery.json',
+            'homepage' => 'homepage.json',
+            'about' => 'about.json',
+            'contact' => 'contact.json',
+            'site' => 'site.json',
+            'social' => 'social.json',
+        ];
+        if (!isset($map[$key])) {
+            header('Location: /rc-panel/?error=1');
             exit;
         }
-        $force = !empty($_POST['force']);
-        $existing = [];
-        foreach (manage_blog_valid_items($current['items'] ?? []) as $item) {
-            $existing[(string) $item['slug']] = $item;
+        $seed = manage_seed($key);
+        if ($seed === []) {
+            header('Location: /rc-panel/?error=1');
+            exit;
         }
-        $seedItems = manage_blog_valid_items($seed['items']);
-        if ($force || count($existing) === 0) {
-            $existing = [];
-            foreach ($seedItems as $seedItem) {
-                $existing[(string) $seedItem['slug']] = $seedItem;
-            }
-        } else {
-            foreach ($seedItems as $seedItem) {
-                $s = (string) ($seedItem['slug'] ?? '');
-                if ($s !== '' && !isset($existing[$s])) {
-                    $existing[$s] = $seedItem;
-                }
+        // For site.json preserve web3forms key if seed somehow empty
+        if ($key === 'site') {
+            $current = manage_read_json('site.json');
+            if (!empty($current['web3formsAccessKey'])) {
+                $seed['web3formsAccessKey'] = $current['web3formsAccessKey'];
             }
         }
-        manage_blog_normalize_and_save([
-            'title' => trim((string) ($current['title'] ?? $seed['title'] ?? 'Our Blog')) ?: 'Our Blog',
-            'intro' => trim((string) ($current['intro'] ?? $seed['intro'] ?? '')),
-            'items' => array_values($existing),
-        ]);
-        header('Location: /rc-panel/edit-blog.php?repaired=1');
+        if (!manage_write_json($map[$key], $seed)) {
+            header('Location: /rc-panel/?error=1');
+            exit;
+        }
+        manage_bump_cache();
+        $redirects = [
+            'blog' => '/rc-panel/edit-blog.php?repaired=1',
+            'services' => '/rc-panel/edit-services.php?saved=1',
+            'faqs' => '/rc-panel/edit-faqs.php?saved=1',
+            'testimonials' => '/rc-panel/edit-testimonials.php?saved=1',
+            'gallery' => '/rc-panel/edit-gallery.php?saved=1',
+            'homepage' => '/rc-panel/edit-homepage.php?saved=1',
+            'about' => '/rc-panel/edit-about.php?saved=1',
+            'contact' => '/rc-panel/edit-contact.php?saved=1',
+            'site' => '/rc-panel/edit-site.php?saved=1',
+            'social' => '/rc-panel/edit-social.php?saved=1',
+        ];
+        header('Location: ' . ($redirects[$key] ?? '/rc-panel/?saved=1'));
         exit;
 
     default:
@@ -377,5 +396,6 @@ switch ($type) {
         exit;
 }
 
+manage_bump_cache();
 header('Location: /rc-panel/?saved=1');
 exit;

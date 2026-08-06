@@ -45,14 +45,26 @@
 
   async function boot() {
     try {
+      var cacheVersion = '';
+      try {
+        var cv = await fetch('/data/cache-version.json', { cache: 'no-store' }).then(function (r) {
+          return r.ok ? r.json() : null;
+        });
+        if (cv && cv.version) cacheVersion = String(cv.version);
+      } catch (e) {}
+
+      function dataUrl(path) {
+        return path + (cacheVersion ? ('?v=' + encodeURIComponent(cacheVersion)) : '');
+      }
+
       const [site, homepage, about, contact, faqs, blog, testimonials] = await Promise.all([
-        fetch('/data/site.json', { cache: 'no-store' }).then(function (r) { return r.json(); }),
-        fetch('/data/homepage.json', { cache: 'no-store' }).then(function (r) { return r.json(); }),
-        fetch('/data/about.json', { cache: 'no-store' }).then(function (r) { return r.json(); }),
-        fetch('/data/contact.json', { cache: 'no-store' }).then(function (r) { return r.json(); }),
-        fetch('/data/faqs.json', { cache: 'no-store' }).then(function (r) { return r.json(); }),
-        fetch('/data/blog.json', { cache: 'no-store' }).then(function (r) { return r.json(); }).catch(function () { return null; }),
-        fetch('/data/testimonials.json', { cache: 'no-store' }).then(function (r) { return r.json(); }).catch(function () { return null; }),
+        fetch(dataUrl('/data/site.json'), { cache: 'no-store' }).then(function (r) { return r.json(); }),
+        fetch(dataUrl('/data/homepage.json'), { cache: 'no-store' }).then(function (r) { return r.json(); }),
+        fetch(dataUrl('/data/about.json'), { cache: 'no-store' }).then(function (r) { return r.json(); }),
+        fetch(dataUrl('/data/contact.json'), { cache: 'no-store' }).then(function (r) { return r.json(); }),
+        fetch(dataUrl('/data/faqs.json'), { cache: 'no-store' }).then(function (r) { return r.json(); }),
+        fetch(dataUrl('/data/blog.json'), { cache: 'no-store' }).then(function (r) { return r.json(); }).catch(function () { return null; }),
+        fetch(dataUrl('/data/testimonials.json'), { cache: 'no-store' }).then(function (r) { return r.json(); }).catch(function () { return null; }),
       ]);
 
       window.__RC_CONTENT__ = { site: site, homepage: homepage, about: about, contact: contact, faqs: faqs, blog: blog, testimonials: testimonials };

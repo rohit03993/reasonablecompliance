@@ -12,6 +12,7 @@ $items = [
     'gallery' => ['Gallery', '/rc-panel/edit-gallery.php'],
     'testimonials' => ['Testimonials', '/rc-panel/edit-testimonials.php'],
     'faqs' => ['FAQs', '/rc-panel/edit-faqs.php'],
+    'cache' => ['Flush cache', '/rc-panel/flush-cache.php'],
 ];
 ?>
 <aside class="sidebar">

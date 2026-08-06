@@ -1,12 +1,18 @@
 <?php
 require __DIR__ . '/auth.php';
 manage_require_login();
-$testimonials = manage_read_json('testimonials.json');
-$items = $testimonials['items'] ?? [];
+$navCurrent = 'testimonials';
+$testimonials = manage_ensure_content('testimonials', 'testimonials.json');
+$items = [];
+foreach (($testimonials['items'] ?? []) as $item) {
+    if (is_array($item) && trim((string) ($item['quote'] ?? '')) !== '') {
+        $items[] = $item;
+    }
+}
 while (count($items) < 3) {
     $items[] = ['quote' => '', 'name' => '', 'role' => ''];
 }
-$navCurrent = 'testimonials';
+$saved = ($_GET['saved'] ?? '') === '1';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -21,8 +27,20 @@ $navCurrent = 'testimonials';
   <div class="layout">
     <?php require __DIR__ . '/partials/nav.php'; ?>
     <main class="main">
-      <h1>Testimonials</h1>
-      <p class="help">Shown on the homepage. Keep quotes short for mobile.</p>
+      <div class="page-head">
+        <div>
+          <h1>Testimonials</h1>
+          <p class="help" style="margin:0">Shown on the homepage. Keep quotes short for mobile.</p>
+        </div>
+        <form class="inline-form" method="post" action="/rc-panel/save.php" onsubmit="return confirm('Reload testimonials from packaged website content?');">
+          <input type="hidden" name="type" value="content_reload" />
+          <input type="hidden" name="key" value="testimonials" />
+          <button type="submit" class="btn secondary">Repair / re-sync</button>
+        </form>
+      </div>
+
+      <?php if ($saved): ?><p class="success">Testimonials saved.</p><?php endif; ?>
+
       <form method="post" action="/rc-panel/save.php">
         <input type="hidden" name="type" value="testimonials" />
         <div class="card">
