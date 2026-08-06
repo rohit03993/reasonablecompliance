@@ -18,7 +18,7 @@ $navCurrent = 'social';
     <?php require __DIR__ . '/partials/nav.php'; ?>
     <main class="main">
       <h1>Social media links</h1>
-      <p class="help">Paste full URLs. Leave blank to hide that icon from the footer.</p>
+      <p class="help">Icons always show in the footer. Paste a full URL to make that icon clickable; leave blank to keep it visible but not linked.</p>
       <form class="card" method="post" action="/rc-panel/save.php">
         <input type="hidden" name="type" value="social" />
         <label>Facebook URL <input name="facebook" type="url" value="<?= manage_h($social['facebook'] ?? '') ?>" placeholder="https://facebook.com/yourpage" /></label>
