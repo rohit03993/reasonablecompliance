@@ -3,7 +3,7 @@ require __DIR__ . '/auth.php';
 manage_require_login();
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Location: /manage/');
+    header('Location: /rc-panel/');
     exit;
 }
 
@@ -139,9 +139,9 @@ switch ($type) {
         break;
 
     default:
-        header('Location: /manage/?error=1');
+        header('Location: /rc-panel/?error=1');
         exit;
 }
 
-header('Location: /manage/?saved=1');
+header('Location: /rc-panel/?saved=1');
 exit;

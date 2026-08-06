@@ -2,16 +2,16 @@
 
 ## Live content login (on server)
 
-URL: `https://reasonablecompliance.com/manage/`
+URL: `https://reasonablecompliance.com/rc-panel/`
 
 - Username: `admin`
 - Password: `Admin@RC2026`
 
-Change password later in `public/manage/config.php` (or on server `public_html/manage/config.php`).
+Change password later in `public/rc-panel/config.php` (or on server `public_html/rc-panel/config.php`).
 
 ## How it works
 
-1. Log in at `/manage/`
+1. Log in at `/rc-panel/`
 2. Edit Brand, Homepage, About, Contact, Services, FAQs
 3. Click Save
 4. Refresh the public website — content updates from `/data/*.json`

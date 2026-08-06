@@ -1,6 +1,6 @@
 <?php
 /**
- * Admin login credentials for /manage
+ * Admin login credentials for /rc-panel
  * Change password by replacing password_hash (use password_hash('new', PASSWORD_BCRYPT) in PHP).
  */
 return [

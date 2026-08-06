@@ -13,7 +13,7 @@ function manage_data_dir(): string
 function manage_require_login(): void
 {
     if (empty($_SESSION['rc_logged_in'])) {
-        header('Location: /manage/login.php');
+        header('Location: /rc-panel/login.php');
         exit;
     }
 }

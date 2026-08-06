@@ -5,7 +5,7 @@ $config = require __DIR__ . '/config.php';
 $error = '';
 
 if (!empty($_SESSION['rc_logged_in'])) {
-    header('Location: /manage/');
+    header('Location: /rc-panel/');
     exit;
 }
 
@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($user === $config['username'] && password_verify($pass, $config['password_hash'])) {
         $_SESSION['rc_logged_in'] = true;
-        header('Location: /manage/');
+        header('Location: /rc-panel/');
         exit;
     }
     $error = 'Invalid username or password.';
@@ -28,10 +28,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="robots" content="noindex" />
   <title>Login | Content Admin</title>
-  <link rel="stylesheet" href="/manage/manage.css" />
+  <link rel="stylesheet" href="/rc-panel/rc-panel.css" />
 </head>
 <body class="login-page">
-  <form class="login-card" method="post" action="/manage/login.php">
+  <form class="login-card" method="post" action="/rc-panel/login.php">
     <h1>Reasonable Compliance</h1>
     <p class="muted">Content Admin</p>
     <?php if ($error): ?>

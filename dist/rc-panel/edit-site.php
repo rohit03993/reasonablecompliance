@@ -10,27 +10,27 @@ $site = manage_read_json('site.json');
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="robots" content="noindex" />
   <title>Brand & Contact | Admin</title>
-  <link rel="stylesheet" href="/manage/manage.css" />
+  <link rel="stylesheet" href="/rc-panel/rc-panel.css" />
 </head>
 <body>
   <div class="layout">
     <aside class="sidebar">
       <h2>Content Admin</h2>
       <nav>
-        <a href="/manage/">Dashboard</a>
-        <a class="active" href="/manage/edit-site.php">Brand & Contact</a>
-        <a href="/manage/edit-homepage.php">Homepage</a>
-        <a href="/manage/edit-about.php">About</a>
-        <a href="/manage/edit-contact.php">Contact page</a>
-        <a href="/manage/edit-services.php">Services</a>
-        <a href="/manage/edit-faqs.php">FAQs</a>
+        <a href="/rc-panel/">Dashboard</a>
+        <a class="active" href="/rc-panel/edit-site.php">Brand & Contact</a>
+        <a href="/rc-panel/edit-homepage.php">Homepage</a>
+        <a href="/rc-panel/edit-about.php">About</a>
+        <a href="/rc-panel/edit-contact.php">Contact page</a>
+        <a href="/rc-panel/edit-services.php">Services</a>
+        <a href="/rc-panel/edit-faqs.php">FAQs</a>
       </nav>
-      <a class="logout" href="/manage/logout.php">Log out</a>
+      <a class="logout" href="/rc-panel/logout.php">Log out</a>
     </aside>
     <main class="main">
       <h1>Brand & Contact</h1>
       <p class="help">Phone/WhatsApp power the call & WhatsApp buttons. WhatsApp format: 9198XXXXXXXX (country code, no +).</p>
-      <form class="card" method="post" action="/manage/save.php">
+      <form class="card" method="post" action="/rc-panel/save.php">
         <input type="hidden" name="type" value="site" />
         <label>Site name <input name="siteName" type="text" value="<?= manage_h($site['siteName'] ?? '') ?>" required /></label>
         <label>Tagline <input name="tagline" type="text" value="<?= manage_h($site['tagline'] ?? '') ?>" /></label>

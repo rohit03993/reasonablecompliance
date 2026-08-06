@@ -10,26 +10,26 @@ $about = manage_read_json('about.json');
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="robots" content="noindex" />
   <title>About | Admin</title>
-  <link rel="stylesheet" href="/manage/manage.css" />
+  <link rel="stylesheet" href="/rc-panel/rc-panel.css" />
 </head>
 <body>
   <div class="layout">
     <aside class="sidebar">
       <h2>Content Admin</h2>
       <nav>
-        <a href="/manage/">Dashboard</a>
-        <a href="/manage/edit-site.php">Brand & Contact</a>
-        <a href="/manage/edit-homepage.php">Homepage</a>
-        <a class="active" href="/manage/edit-about.php">About</a>
-        <a href="/manage/edit-contact.php">Contact page</a>
-        <a href="/manage/edit-services.php">Services</a>
-        <a href="/manage/edit-faqs.php">FAQs</a>
+        <a href="/rc-panel/">Dashboard</a>
+        <a href="/rc-panel/edit-site.php">Brand & Contact</a>
+        <a href="/rc-panel/edit-homepage.php">Homepage</a>
+        <a class="active" href="/rc-panel/edit-about.php">About</a>
+        <a href="/rc-panel/edit-contact.php">Contact page</a>
+        <a href="/rc-panel/edit-services.php">Services</a>
+        <a href="/rc-panel/edit-faqs.php">FAQs</a>
       </nav>
-      <a class="logout" href="/manage/logout.php">Log out</a>
+      <a class="logout" href="/rc-panel/logout.php">Log out</a>
     </aside>
     <main class="main">
       <h1>About page</h1>
-      <form class="card" method="post" action="/manage/save.php">
+      <form class="card" method="post" action="/rc-panel/save.php">
         <input type="hidden" name="type" value="about" />
         <label>Title <input name="title" type="text" value="<?= manage_h($about['title'] ?? '') ?>" /></label>
         <label>SEO title <input name="seoTitle" type="text" value="<?= manage_h($about['seoTitle'] ?? '') ?>" /></label>

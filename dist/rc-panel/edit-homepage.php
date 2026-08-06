@@ -12,27 +12,27 @@ $steps = $h['processSteps'] ?? [];
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="robots" content="noindex" />
   <title>Homepage | Admin</title>
-  <link rel="stylesheet" href="/manage/manage.css" />
+  <link rel="stylesheet" href="/rc-panel/rc-panel.css" />
 </head>
 <body>
   <div class="layout">
     <aside class="sidebar">
       <h2>Content Admin</h2>
       <nav>
-        <a href="/manage/">Dashboard</a>
-        <a href="/manage/edit-site.php">Brand & Contact</a>
-        <a class="active" href="/manage/edit-homepage.php">Homepage</a>
-        <a href="/manage/edit-about.php">About</a>
-        <a href="/manage/edit-contact.php">Contact page</a>
-        <a href="/manage/edit-services.php">Services</a>
-        <a href="/manage/edit-faqs.php">FAQs</a>
+        <a href="/rc-panel/">Dashboard</a>
+        <a href="/rc-panel/edit-site.php">Brand & Contact</a>
+        <a class="active" href="/rc-panel/edit-homepage.php">Homepage</a>
+        <a href="/rc-panel/edit-about.php">About</a>
+        <a href="/rc-panel/edit-contact.php">Contact page</a>
+        <a href="/rc-panel/edit-services.php">Services</a>
+        <a href="/rc-panel/edit-faqs.php">FAQs</a>
       </nav>
-      <a class="logout" href="/manage/logout.php">Log out</a>
+      <a class="logout" href="/rc-panel/logout.php">Log out</a>
     </aside>
     <main class="main">
       <h1>Homepage</h1>
       <p class="help">For list fields, put one item per line.</p>
-      <form method="post" action="/manage/save.php">
+      <form method="post" action="/rc-panel/save.php">
         <input type="hidden" name="type" value="homepage" />
         <div class="card">
           <h2>Hero</h2>
