@@ -164,3 +164,56 @@
     transition: none;
   }
 }
+
+.blog-prose {
+  @apply text-base leading-relaxed text-text sm:text-lg;
+}
+
+.blog-prose :where(p, ul, ol, h2, h3, blockquote, table, pre, img) {
+  margin-top: 1.1em;
+  margin-bottom: 1.1em;
+}
+
+.blog-prose :where(p, li) {
+  color: inherit;
+}
+
+.blog-prose :where(h2) {
+  @apply font-display text-2xl font-bold text-navy;
+  margin-top: 1.75em;
+}
+
+.blog-prose :where(h3) {
+  @apply font-display text-xl font-bold text-navy;
+}
+
+.blog-prose :where(ul) {
+  list-style: disc;
+  padding-left: 1.25rem;
+}
+
+.blog-prose :where(ol) {
+  list-style: decimal;
+  padding-left: 1.25rem;
+}
+
+.blog-prose :where(a) {
+  @apply font-semibold text-emerald hover:text-emerald-dark;
+}
+
+.blog-prose :where(strong, b) {
+  font-weight: 700;
+  color: var(--color-navy);
+}
+
+.blog-prose :where(em, i) {
+  font-style: italic;
+}
+
+.blog-prose :where(img) {
+  @apply w-full rounded-xl border border-navy/10;
+}
+
+.blog-prose :where(blockquote) {
+  @apply border-l-4 border-emerald/50 pl-4 text-muted italic;
+}

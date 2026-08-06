@@ -241,6 +241,7 @@ switch ($type) {
                 'excerpt' => trim((string) ($_POST["excerpt_$i"] ?? '')),
                 'date' => trim((string) ($_POST["date_$i"] ?? date('Y-m-d'))),
                 'author' => trim((string) ($_POST["author_$i"] ?? 'Reasonable Compliance')),
+                'image' => trim((string) ($_POST["image_$i"] ?? '')),
                 'seoTitle' => trim((string) ($_POST["seoTitle_$i"] ?? '')),
                 'seoDescription' => trim((string) ($_POST["seoDescription_$i"] ?? '')),
                 'body' => trim((string) ($_POST["body_$i"] ?? '')),

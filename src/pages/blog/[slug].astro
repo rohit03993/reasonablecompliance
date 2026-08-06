@@ -23,10 +23,36 @@ function formatDate(dateStr: string) {
   }
 }
 
-const paragraphs = String(post.body || '')
-  .split(/\n\s*\n/)
-  .map((block) => block.trim())
-  .filter(Boolean);
+function bodyToHtml(body: string) {
+  const raw = String(body || '').trim();
+  if (!raw) return '';
+  if (/<[a-z][\s\S]*>/i.test(raw)) return raw;
+  return raw
+    .split(/\n\s*\n/)
+    .map((block) => block.trim())
+    .filter(Boolean)
+    .map((block) => {
+      const lines = block.split('\n');
+      const isList = lines.every((line) => !line.trim() || line.trim().startsWith('- '));
+      if (isList) {
+        return (
+          '<ul>' +
+          lines
+            .filter((line) => line.trim().startsWith('- '))
+            .map((line) => '<li>' + line.replace(/^\s*-\s*/, '') + '</li>')
+            .join('') +
+          '</ul>'
+        );
+      }
+      if (lines.length === 1 && lines[0].length < 80 && !lines[0].endsWith('.')) {
+        return '<h2>' + lines[0] + '</h2>';
+      }
+      return '<p>' + lines.join('<br>') + '</p>';
+    })
+    .join('');
+}
+
+const bodyHtml = bodyToHtml(post.body || '');
 ---
 
 <BaseLayout title={post.seoTitle || `${post.title} | Reasonable Compliance`} description={post.seoDescription || post.excerpt}>
@@ -49,30 +75,23 @@ const paragraphs = String(post.body || '')
 
     <section class="section-pad bg-surface">
       <div class="container-rc max-w-3xl">
-        <p class="reveal text-lg leading-relaxed text-muted" data-blog-excerpt>{post.excerpt}</p>
-        <div class="reveal mt-8 space-y-5 text-base leading-relaxed text-text sm:text-lg" data-blog-body>
-          {
-            paragraphs.map((block) => {
-              const lines = block.split('\n');
-              const isList = lines.every((line) => line.trim().startsWith('- ') || line.trim() === '');
-              if (isList) {
-                return (
-                  <ul class="list-disc space-y-2 pl-5">
-                    {lines
-                      .filter((line) => line.trim().startsWith('- '))
-                      .map((line) => (
-                        <li>{line.replace(/^\s*-\s*/, '')}</li>
-                      ))}
-                  </ul>
-                );
-              }
-              if (lines.length === 1 && lines[0].length < 80 && !lines[0].endsWith('.')) {
-                return <h2 class="!mt-10 text-2xl font-bold text-navy">{lines[0]}</h2>;
-              }
-              return <p>{block}</p>;
-            })
-          }
-        </div>
+        {
+          post.image && (
+            <div class="reveal overflow-hidden rounded-2xl border border-navy/10 bg-white">
+              <img
+                src={post.image}
+                alt={post.title}
+                class="aspect-[16/9] w-full object-cover"
+                data-blog-image
+                loading="eager"
+              />
+            </div>
+          )
+        }
+        <p class:list={['text-lg leading-relaxed text-muted', post.image ? 'mt-8' : '']} data-blog-excerpt>
+          {post.excerpt}
+        </p>
+        <div class="blog-prose reveal mt-8" data-blog-body set:html={bodyHtml} />
 
         <div class="reveal mt-12 flex flex-wrap gap-3 border-t border-navy/10 pt-8">
           <a href="/blog" class="btn-outline">← Back to blog</a>
@@ -96,37 +115,39 @@ const paragraphs = String(post.body || '')
     }
   }
 
-  function escapeHtml(str) {
-    return String(str)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
-  }
-
-  function renderBody(body) {
-    const blocks = String(body || '')
+  function bodyToHtml(body) {
+    var raw = String(body || '').trim();
+    if (!raw) return '';
+    if (/<[a-z][\s\S]*>/i.test(raw)) return raw;
+    return raw
       .split(/\n\s*\n/)
-      .map((b) => b.trim())
-      .filter(Boolean);
-    return blocks
-      .map((block) => {
-        const lines = block.split('\n');
-        const isList = lines.every((line) => line.trim().startsWith('- ') || line.trim() === '');
+      .map(function (block) {
+        return block.trim();
+      })
+      .filter(Boolean)
+      .map(function (block) {
+        var lines = block.split('\n');
+        var isList = lines.every(function (line) {
+          return !line.trim() || line.trim().startsWith('- ');
+        });
         if (isList) {
           return (
-            '<ul class="list-disc space-y-2 pl-5">' +
+            '<ul>' +
             lines
-              .filter((line) => line.trim().startsWith('- '))
-              .map((line) => '<li>' + escapeHtml(line.replace(/^\s*-\s*/, '')) + '</li>')
+              .filter(function (line) {
+                return line.trim().startsWith('- ');
+              })
+              .map(function (line) {
+                return '<li>' + line.replace(/^\s*-\s*/, '') + '</li>';
+              })
               .join('') +
             '</ul>'
           );
         }
         if (lines.length === 1 && lines[0].length < 80 && !lines[0].endsWith('.')) {
-          return '<h2 class="!mt-10 text-2xl font-bold text-navy">' + escapeHtml(lines[0]) + '</h2>';
+          return '<h2>' + lines[0] + '</h2>';
         }
-        return '<p>' + escapeHtml(block).replace(/\n/g, '<br>') + '</p>';
+        return '<p>' + lines.join('<br>') + '</p>';
       })
       .join('');
   }
@@ -140,10 +161,12 @@ const paragraphs = String(post.body || '')
       const metaEl = document.querySelector('[data-blog-meta]');
       const excerptEl = document.querySelector('[data-blog-excerpt]');
       const bodyEl = document.querySelector('[data-blog-body]');
+      const imageEl = document.querySelector('[data-blog-image]');
       if (titleEl) titleEl.textContent = post.title || '';
       if (metaEl) metaEl.textContent = formatDate(post.date) + (post.author ? ' · ' + post.author : '');
       if (excerptEl) excerptEl.textContent = post.excerpt || '';
-      if (bodyEl) bodyEl.innerHTML = renderBody(post.body);
+      if (bodyEl) bodyEl.innerHTML = bodyToHtml(post.body);
+      if (imageEl && post.image) imageEl.setAttribute('src', post.image);
       if (post.seoTitle) document.title = post.seoTitle;
     } catch (e) {
       console.warn('Blog post live refresh skipped', e);

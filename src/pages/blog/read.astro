@@ -23,9 +23,14 @@ import site from '../../../public/data/site.json';
 
     <section class="section-pad bg-surface">
       <div class="container-rc max-w-3xl">
+        <div class="overflow-hidden rounded-2xl border border-navy/10 bg-white" data-blog-image-wrap hidden>
+          <img src="" alt="" class="aspect-[16/9] w-full object-cover" data-blog-image />
+        </div>
         <p class="text-lg leading-relaxed text-muted" data-blog-excerpt></p>
-        <div class="mt-8 space-y-5 text-base leading-relaxed text-text sm:text-lg" data-blog-body></div>
-        <p class="mt-8 hidden text-muted" data-blog-missing>This article was not found. <a class="text-emerald" href="/blog">Back to blog</a></p>
+        <div class="blog-prose mt-8" data-blog-body></div>
+        <p class="mt-8 hidden text-muted" data-blog-missing>
+          This article was not found. <a class="text-emerald" href="/blog">Back to blog</a>
+        </p>
         <div class="mt-12 flex flex-wrap gap-3 border-t border-navy/10 pt-8">
           <a href="/blog" class="btn-outline">← Back to blog</a>
           <a href="/contact" class="btn-primary">Book a consultation</a>
@@ -48,37 +53,39 @@ import site from '../../../public/data/site.json';
     }
   }
 
-  function escapeHtml(str) {
-    return String(str)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
-  }
-
-  function renderBody(body) {
-    const blocks = String(body || '')
+  function bodyToHtml(body) {
+    var raw = String(body || '').trim();
+    if (!raw) return '';
+    if (/<[a-z][\s\S]*>/i.test(raw)) return raw;
+    return raw
       .split(/\n\s*\n/)
-      .map((b) => b.trim())
-      .filter(Boolean);
-    return blocks
-      .map((block) => {
-        const lines = block.split('\n');
-        const isList = lines.every((line) => line.trim().startsWith('- ') || line.trim() === '');
+      .map(function (block) {
+        return block.trim();
+      })
+      .filter(Boolean)
+      .map(function (block) {
+        var lines = block.split('\n');
+        var isList = lines.every(function (line) {
+          return !line.trim() || line.trim().startsWith('- ');
+        });
         if (isList) {
           return (
-            '<ul class="list-disc space-y-2 pl-5">' +
+            '<ul>' +
             lines
-              .filter((line) => line.trim().startsWith('- '))
-              .map((line) => '<li>' + escapeHtml(line.replace(/^\s*-\s*/, '')) + '</li>')
+              .filter(function (line) {
+                return line.trim().startsWith('- ');
+              })
+              .map(function (line) {
+                return '<li>' + line.replace(/^\s*-\s*/, '') + '</li>';
+              })
               .join('') +
             '</ul>'
           );
         }
         if (lines.length === 1 && lines[0].length < 80 && !lines[0].endsWith('.')) {
-          return '<h2 class="!mt-10 text-2xl font-bold text-navy">' + escapeHtml(lines[0]) + '</h2>';
+          return '<h2>' + lines[0] + '</h2>';
         }
-        return '<p>' + escapeHtml(block).replace(/\n/g, '<br>') + '</p>';
+        return '<p>' + lines.join('<br>') + '</p>';
       })
       .join('');
   }
@@ -91,6 +98,8 @@ import site from '../../../public/data/site.json';
     const excerptEl = document.querySelector('[data-blog-excerpt]');
     const bodyEl = document.querySelector('[data-blog-body]');
     const missingEl = document.querySelector('[data-blog-missing]');
+    const imageWrap = document.querySelector('[data-blog-image-wrap]');
+    const imageEl = document.querySelector('[data-blog-image]');
 
     try {
       const blog = await fetch('/data/blog.json', { cache: 'no-store' }).then((r) => r.json());
@@ -103,7 +112,13 @@ import site from '../../../public/data/site.json';
       if (titleEl) titleEl.textContent = post.title || '';
       if (metaEl) metaEl.textContent = formatDate(post.date) + (post.author ? ' · ' + post.author : '');
       if (excerptEl) excerptEl.textContent = post.excerpt || '';
-      if (bodyEl) bodyEl.innerHTML = renderBody(post.body);
+      if (bodyEl) bodyEl.innerHTML = bodyToHtml(post.body);
+      if (post.image && imageWrap && imageEl) {
+        imageEl.setAttribute('src', post.image);
+        imageEl.setAttribute('alt', post.title || '');
+        imageWrap.hidden = false;
+        if (excerptEl) excerptEl.classList.add('mt-8');
+      }
       document.title = post.seoTitle || post.title + ' | Reasonable Compliance';
     } catch (e) {
       if (titleEl) titleEl.textContent = 'Unable to load article';

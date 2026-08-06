@@ -231,3 +231,90 @@ button.secondary,
 .card li {
   margin: 8px 0;
 }
+
+.post-index {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.post-index li {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #fafcfe;
+  margin: 0;
+}
+
+.post-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.post-card-head h2 {
+  margin: 0;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  background: #ecfdf5;
+  color: #047857;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 10px;
+}
+
+.badge-new {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.image-field {
+  margin-bottom: 14px;
+}
+
+.image-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin: 8px 0 10px;
+}
+
+.image-actions input[type="file"] {
+  display: none;
+}
+
+.image-preview-wrap {
+  margin-top: 8px;
+}
+
+.image-preview {
+  display: block;
+  width: 100%;
+  max-width: 320px;
+  max-height: 180px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: #f8fafc;
+}
+
+.blog-admin .tox-tinymce {
+  border-radius: 8px !important;
+  border-color: var(--border) !important;
+}
+
+.blog-admin textarea.rich-editor {
+  min-height: 220px;
+}

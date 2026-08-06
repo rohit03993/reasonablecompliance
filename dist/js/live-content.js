@@ -159,13 +159,18 @@
                 } catch (e) {
                   dateLabel = post.date || '';
                 }
+                var img = post.image
+                  ? '<a href="' + href + '" class="block aspect-[16/10] overflow-hidden bg-surface-alt"><img src="' + escapeHtml(post.image) + '" alt="' + escapeHtml(post.title || '') + '" class="h-full w-full object-cover transition duration-300 group-hover:scale-[1.03]" loading="lazy" /></a>'
+                  : '';
                 return (
-                  '<li class="reveal is-visible group flex flex-col rounded-2xl border border-navy/10 bg-white p-6 transition duration-300 hover:-translate-y-1 hover:border-emerald/30 hover:shadow-[0_16px_40px_rgba(10,37,64,0.08)]">' +
+                  '<li class="reveal is-visible group flex flex-col overflow-hidden rounded-2xl border border-navy/10 bg-white transition duration-300 hover:-translate-y-1 hover:border-emerald/30 hover:shadow-[0_16px_40px_rgba(10,37,64,0.08)]">' +
+                  img +
+                  '<div class="flex flex-1 flex-col p-6">' +
                   '<p class="text-xs font-semibold uppercase tracking-wider text-emerald">' + escapeHtml(dateLabel) + '</p>' +
                   '<h3 class="mt-3 text-lg font-semibold text-navy transition group-hover:text-emerald"><a href="' + href + '">' + escapeHtml(post.title || '') + '</a></h3>' +
                   '<p class="mt-3 flex-1 text-sm leading-relaxed text-muted">' + escapeHtml(post.excerpt || '') + '</p>' +
                   '<a href="' + href + '" class="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-emerald transition group-hover:gap-2">Read more <span aria-hidden="true">→</span></a>' +
-                  '</li>'
+                  '</div></li>'
                 );
               })
               .join('');
