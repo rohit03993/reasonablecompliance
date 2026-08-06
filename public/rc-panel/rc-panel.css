@@ -431,11 +431,13 @@ button.secondary,
 
 .table-wrap {
   overflow-x: auto;
+  max-width: 100%;
 }
 
 .posts-table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
 }
 
 .posts-table th,
@@ -444,6 +446,27 @@ button.secondary,
   padding: 12px 10px;
   border-bottom: 1px solid var(--border);
   vertical-align: middle;
+  word-break: break-word;
+}
+
+.posts-table th:nth-child(1),
+.posts-table td:nth-child(1) {
+  width: 88px;
+}
+
+.posts-table th:nth-child(3),
+.posts-table td:nth-child(3) {
+  width: 110px;
+}
+
+.posts-table th:nth-child(4),
+.posts-table td:nth-child(4) {
+  width: 110px;
+}
+
+.posts-table th:nth-child(5),
+.posts-table td:nth-child(5) {
+  width: 170px;
 }
 
 .posts-table th {
@@ -454,21 +477,29 @@ button.secondary,
 }
 
 .thumb {
-  width: 64px;
-  height: 48px;
+  width: 72px;
+  height: 54px;
+  max-width: 72px;
+  max-height: 54px;
   border-radius: 8px;
   overflow: hidden;
   background: #eef2f7;
-  display: grid;
-  place-items: center;
+  display: block;
+  position: relative;
   font-size: 0.65rem;
   color: var(--muted);
+  line-height: 54px;
+  text-align: center;
 }
 
 .thumb img {
-  width: 100%;
-  height: 100%;
+  display: block;
+  width: 72px !important;
+  height: 54px !important;
+  max-width: 72px !important;
+  max-height: 54px !important;
   object-fit: cover;
+  object-position: center;
 }
 
 .actions {

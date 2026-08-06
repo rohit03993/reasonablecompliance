@@ -111,7 +111,7 @@ foreach ($posts as $p) {
                     <td>
                       <div class="thumb">
                         <?php if ($image !== ''): ?>
-                          <img src="<?= manage_h($image) ?>" alt="" />
+                          <img src="<?= manage_h($image) ?>" alt="" width="72" height="54" />
                         <?php else: ?>
                           <span>No image</span>
                         <?php endif; ?>
