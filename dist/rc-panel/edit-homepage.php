@@ -1,6 +1,7 @@
 <?php
 require __DIR__ . '/auth.php';
 manage_require_login();
+$navCurrent = 'homepage';
 $h = manage_read_json('homepage.json');
 $hero = $h['hero'] ?? [];
 $steps = $h['processSteps'] ?? [];
@@ -16,19 +17,7 @@ $steps = $h['processSteps'] ?? [];
 </head>
 <body>
   <div class="layout">
-    <aside class="sidebar">
-      <h2>Content Admin</h2>
-      <nav>
-        <a href="/rc-panel/">Dashboard</a>
-        <a href="/rc-panel/edit-site.php">Brand & Contact</a>
-        <a class="active" href="/rc-panel/edit-homepage.php">Homepage</a>
-        <a href="/rc-panel/edit-about.php">About</a>
-        <a href="/rc-panel/edit-contact.php">Contact page</a>
-        <a href="/rc-panel/edit-services.php">Services</a>
-        <a href="/rc-panel/edit-faqs.php">FAQs</a>
-      </nav>
-      <a class="logout" href="/rc-panel/logout.php">Log out</a>
-    </aside>
+    <?php require __DIR__ . '/partials/nav.php'; ?>
     <main class="main">
       <h1>Homepage</h1>
       <p class="help">For list fields, put one item per line.</p>

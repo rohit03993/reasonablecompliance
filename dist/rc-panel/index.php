@@ -2,6 +2,7 @@
 require __DIR__ . '/auth.php';
 manage_require_login();
 $msg = $_GET['saved'] ?? '';
+$navCurrent = '';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -14,19 +15,7 @@ $msg = $_GET['saved'] ?? '';
 </head>
 <body>
   <div class="layout">
-    <aside class="sidebar">
-      <h2>Content Admin</h2>
-      <nav>
-        <a class="active" href="/rc-panel/">Dashboard</a>
-        <a href="/rc-panel/edit-site.php">Brand & Contact</a>
-        <a href="/rc-panel/edit-homepage.php">Homepage</a>
-        <a href="/rc-panel/edit-about.php">About</a>
-        <a href="/rc-panel/edit-contact.php">Contact page</a>
-        <a href="/rc-panel/edit-services.php">Services</a>
-        <a href="/rc-panel/edit-faqs.php">FAQs</a>
-      </nav>
-      <a class="logout" href="/rc-panel/logout.php">Log out</a>
-    </aside>
+    <?php require __DIR__ . '/partials/nav.php'; ?>
     <main class="main">
       <h1>Dashboard</h1>
       <p class="help">Edit website content on the live server. Changes show after you save and refresh the public page.</p>
@@ -36,10 +25,11 @@ $msg = $_GET['saved'] ?? '';
       <div class="card">
         <h2>What you can edit</h2>
         <ul>
-          <li><a href="/rc-panel/edit-site.php">Brand & Contact</a> — logo path, phone, WhatsApp, email, CTAs</li>
-          <li><a href="/rc-panel/edit-homepage.php">Homepage</a> — hero, trust, industries, process</li>
-          <li><a href="/rc-panel/edit-about.php">About</a></li>
-          <li><a href="/rc-panel/edit-contact.php">Contact page</a></li>
+          <li><a href="/rc-panel/edit-site.php">Brand & Contact</a></li>
+          <li><a href="/rc-panel/edit-social.php">Social Links</a> — Facebook, Instagram, LinkedIn, Twitter</li>
+          <li><a href="/rc-panel/edit-homepage.php">Homepage</a></li>
+          <li><a href="/rc-panel/edit-gallery.php">Gallery</a> — photos only</li>
+          <li><a href="/rc-panel/edit-testimonials.php">Testimonials</a></li>
           <li><a href="/rc-panel/edit-services.php">Services</a></li>
           <li><a href="/rc-panel/edit-faqs.php">FAQs</a></li>
         </ul>

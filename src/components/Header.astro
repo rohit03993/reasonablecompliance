@@ -1,14 +1,11 @@
 ---
 import site from '../../public/data/site.json';
+import servicesData from '../../public/data/services.json';
 
 const pathname = Astro.url.pathname;
-
-const links = [
-  { href: '/', label: 'Home' },
-  { href: '/about', label: 'About' },
-  { href: '/services', label: 'Services' },
-  { href: '/contact', label: 'Contact' },
-];
+const services = [...servicesData.items].sort((a, b) => a.order - b.order);
+const servicesActive = pathname.startsWith('/services');
+const galleryActive = pathname.startsWith('/gallery');
 
 function isActive(href: string) {
   if (href === '/') return pathname === '/';
@@ -41,30 +38,99 @@ function isActive(href: string) {
       }
     </a>
 
-    <nav class="hidden items-center gap-1 md:flex" aria-label="Primary">
-      {
-        links.map((link) => (
+    <nav class="hidden items-center gap-1 lg:flex" aria-label="Primary">
+      <a
+        href="/"
+        class:list={[
+          'rounded-md px-3 py-2 text-sm font-medium transition',
+          isActive('/') ? 'text-emerald' : 'text-navy/70 hover:text-navy',
+        ]}
+        aria-current={isActive('/') ? 'page' : undefined}
+      >
+        Home
+      </a>
+      <a
+        href="/about"
+        class:list={[
+          'rounded-md px-3 py-2 text-sm font-medium transition',
+          isActive('/about') ? 'text-emerald' : 'text-navy/70 hover:text-navy',
+        ]}
+        aria-current={isActive('/about') ? 'page' : undefined}
+      >
+        About
+      </a>
+
+      <div class="relative" data-dropdown>
+        <button
+          type="button"
+          class:list={[
+            'inline-flex items-center gap-1 rounded-md px-3 py-2 text-sm font-medium transition',
+            servicesActive ? 'text-emerald' : 'text-navy/70 hover:text-navy',
+          ]}
+          aria-expanded="false"
+          aria-haspopup="true"
+          data-dropdown-trigger
+        >
+          Services
+          <svg class="h-3.5 w-3.5 opacity-70" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd"></path>
+          </svg>
+        </button>
+        <div
+          class="invisible absolute left-0 top-full z-50 mt-1 w-[min(22rem,80vw)] origin-top scale-95 rounded-xl border border-navy/10 bg-white p-2 opacity-0 shadow-lg transition duration-150"
+          data-dropdown-panel
+          hidden
+        >
           <a
-            href={link.href}
-            class:list={[
-              'rounded-md px-3 py-2 text-sm font-medium transition',
-              isActive(link.href)
-                ? 'text-emerald'
-                : 'text-navy/70 hover:text-navy',
-            ]}
-            aria-current={isActive(link.href) ? 'page' : undefined}
+            href="/services"
+            class="block rounded-lg px-3 py-2.5 text-sm font-semibold text-navy hover:bg-surface-alt hover:text-emerald"
           >
-            {link.label}
+            All services
           </a>
-        ))
-      }
-      <a href="/contact" class="btn-primary ml-2">{site.ctaPrimary}</a>
+          <div class="my-1 border-t border-navy/10"></div>
+          {
+            services.map((service) => (
+              <a
+                href={`/services/${service.slug}`}
+                class:list={[
+                  'block rounded-lg px-3 py-2.5 text-sm text-navy/80 hover:bg-surface-alt hover:text-emerald',
+                  pathname.includes(service.slug) && 'bg-surface-alt text-emerald',
+                ]}
+              >
+                {service.title}
+              </a>
+            ))
+          }
+        </div>
+      </div>
+
+      <a
+        href="/gallery"
+        class:list={[
+          'rounded-md px-3 py-2 text-sm font-medium transition',
+          galleryActive ? 'text-emerald' : 'text-navy/70 hover:text-navy',
+        ]}
+        aria-current={galleryActive ? 'page' : undefined}
+      >
+        Gallery
+      </a>
+      <a
+        href="/contact"
+        class:list={[
+          'rounded-md px-3 py-2 text-sm font-medium transition',
+          isActive('/contact') ? 'text-emerald' : 'text-navy/70 hover:text-navy',
+        ]}
+        aria-current={isActive('/contact') ? 'page' : undefined}
+      >
+        Contact
+      </a>
+      <a href="/contact" class="btn-primary ml-2" data-cms="site.ctaPrimary">{site.ctaPrimary}</a>
     </nav>
 
     <button
       type="button"
       id="nav-toggle"
-      class="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md border border-navy/15 text-navy md:hidden"
+      class="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md border border-navy/15 text-navy lg:hidden"
       aria-expanded="false"
       aria-controls="mobile-nav"
       aria-label="Open menu"
@@ -75,22 +141,35 @@ function isActive(href: string) {
     </button>
   </div>
 
-  <div id="mobile-nav" class="hidden border-t border-navy/10 bg-white md:hidden" hidden>
-    <nav class="container-rc flex flex-col gap-1 py-3" aria-label="Mobile">
-      {
-        links.map((link) => (
-          <a
-            href={link.href}
-            class:list={[
-              'rounded-md px-3 py-3 text-base font-medium',
-              isActive(link.href) ? 'bg-surface-alt text-emerald' : 'text-navy',
-            ]}
-          >
-            {link.label}
-          </a>
-        ))
-      }
-      <a href="/contact" class="btn-primary mt-2 w-full">{site.ctaPrimary}</a>
+  <div id="mobile-nav" class="hidden max-h-[80vh] overflow-y-auto border-t border-navy/10 bg-white lg:hidden" hidden>
+    <nav class="container-rc flex flex-col gap-1 py-3 pb-6" aria-label="Mobile">
+      <a href="/" class:list={['rounded-md px-3 py-3 text-base font-medium', isActive('/') ? 'bg-surface-alt text-emerald' : 'text-navy']}>Home</a>
+      <a href="/about" class:list={['rounded-md px-3 py-3 text-base font-medium', isActive('/about') ? 'bg-surface-alt text-emerald' : 'text-navy']}>About</a>
+
+      <details class="rounded-md" open={servicesActive}>
+        <summary class="cursor-pointer list-none px-3 py-3 text-base font-medium text-navy marker:content-none [&::-webkit-details-marker]:hidden">
+          <span class="flex items-center justify-between">
+            Services
+            <svg class="h-4 w-4 text-navy/50" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd"></path>
+            </svg>
+          </span>
+        </summary>
+        <div class="mb-2 ml-2 space-y-1 border-l border-navy/10 pl-3">
+          <a href="/services" class="block rounded-md px-3 py-2.5 text-sm font-semibold text-navy hover:bg-surface-alt">All services</a>
+          {
+            services.map((service) => (
+              <a href={`/services/${service.slug}`} class="block rounded-md px-3 py-2.5 text-sm text-navy/80 hover:bg-surface-alt hover:text-emerald">
+                {service.title}
+              </a>
+            ))
+          }
+        </div>
+      </details>
+
+      <a href="/gallery" class:list={['rounded-md px-3 py-3 text-base font-medium', galleryActive ? 'bg-surface-alt text-emerald' : 'text-navy']}>Gallery</a>
+      <a href="/contact" class:list={['rounded-md px-3 py-3 text-base font-medium', isActive('/contact') ? 'bg-surface-alt text-emerald' : 'text-navy']}>Contact</a>
+      <a href="/contact" class="btn-primary mt-2 w-full" data-cms="site.ctaPrimary">{site.ctaPrimary}</a>
     </nav>
   </div>
 </header>
@@ -114,4 +193,39 @@ function isActive(href: string) {
       }
     });
   }
+
+  document.querySelectorAll('[data-dropdown]').forEach((wrap) => {
+    const trigger = wrap.querySelector('[data-dropdown-trigger]');
+    const menu = wrap.querySelector('[data-dropdown-panel]');
+    if (!(trigger instanceof HTMLElement) || !(menu instanceof HTMLElement)) return;
+
+    const open = () => {
+      menu.hidden = false;
+      menu.classList.remove('invisible', 'opacity-0', 'scale-95');
+      menu.classList.add('visible', 'opacity-100', 'scale-100');
+      trigger.setAttribute('aria-expanded', 'true');
+    };
+    const close = () => {
+      menu.classList.add('invisible', 'opacity-0', 'scale-95');
+      menu.classList.remove('visible', 'opacity-100', 'scale-100');
+      trigger.setAttribute('aria-expanded', 'false');
+      window.setTimeout(() => {
+        menu.hidden = true;
+      }, 120);
+    };
+
+    trigger.addEventListener('click', (event) => {
+      event.preventDefault();
+      if (menu.hidden) open();
+      else close();
+    });
+
+    document.addEventListener('click', (event) => {
+      if (!wrap.contains(event.target as Node)) close();
+    });
+
+    wrap.addEventListener('keydown', (event) => {
+      if ((event as KeyboardEvent).key === 'Escape') close();
+    });
+  });
 </script>

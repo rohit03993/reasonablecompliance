@@ -138,6 +138,68 @@ switch ($type) {
         manage_write_json('services.json', ['items' => $items]);
         break;
 
+    case 'social':
+        manage_write_json('social.json', [
+            'facebook' => trim((string) ($_POST['facebook'] ?? '')),
+            'instagram' => trim((string) ($_POST['instagram'] ?? '')),
+            'linkedin' => trim((string) ($_POST['linkedin'] ?? '')),
+            'twitter' => trim((string) ($_POST['twitter'] ?? '')),
+        ]);
+        break;
+
+    case 'gallery':
+        $gItems = [];
+        $titles = $_POST['item_title'] ?? [];
+        $images = $_POST['item_image'] ?? [];
+        $orders = $_POST['item_order'] ?? [];
+        if (is_array($titles)) {
+            foreach ($titles as $i => $title) {
+                $title = trim((string) $title);
+                $image = trim((string) ($images[$i] ?? ''));
+                if ($title === '' && $image === '') {
+                    continue;
+                }
+                $gItems[] = [
+                    'title' => $title !== '' ? $title : 'Gallery photo',
+                    'image' => $image,
+                    'order' => (int) ($orders[$i] ?? ($i + 1)),
+                ];
+            }
+        }
+        usort($gItems, fn($a, $b) => ($a['order'] <=> $b['order']));
+        manage_write_json('gallery.json', [
+            'title' => trim((string) ($_POST['title'] ?? 'Gallery')),
+            'intro' => trim((string) ($_POST['intro'] ?? '')),
+            'items' => $gItems,
+        ]);
+        break;
+
+    case 'testimonials':
+        $tItems = [];
+        $quotes = $_POST['quote'] ?? [];
+        $names = $_POST['name'] ?? [];
+        $roles = $_POST['role'] ?? [];
+        if (is_array($quotes)) {
+            foreach ($quotes as $i => $quote) {
+                $quote = trim((string) $quote);
+                $name = trim((string) ($names[$i] ?? ''));
+                $role = trim((string) ($roles[$i] ?? ''));
+                if ($quote === '' && $name === '') {
+                    continue;
+                }
+                $tItems[] = [
+                    'quote' => $quote,
+                    'name' => $name !== '' ? $name : 'Client',
+                    'role' => $role,
+                ];
+            }
+        }
+        manage_write_json('testimonials.json', [
+            'title' => trim((string) ($_POST['title'] ?? 'What our clients say')),
+            'items' => $tItems,
+        ]);
+        break;
+
     default:
         header('Location: /rc-panel/?error=1');
         exit;

@@ -1,0 +1,23 @@
+---
+import testimonials from '../../public/data/testimonials.json';
+---
+
+<section class="section-pad bg-surface-alt" id="testimonials">
+  <div class="container-rc">
+    <div class="reveal mx-auto max-w-2xl text-center">
+      <p class="text-sm font-semibold uppercase tracking-wider text-emerald">Testimonials</p>
+      <h2 class="mt-2 text-3xl font-bold sm:text-4xl">{testimonials.title}</h2>
+    </div>
+    <ul class="mt-12 grid gap-8 md:grid-cols-3">
+      {
+        testimonials.items.map((item) => (
+          <li class="reveal border-t border-navy/15 pt-6">
+            <p class="text-sm leading-relaxed text-muted sm:text-base">“{item.quote}”</p>
+            <p class="mt-5 text-sm font-semibold text-navy">{item.name}</p>
+            <p class="text-xs text-muted">{item.role}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>

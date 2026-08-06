@@ -1,0 +1,26 @@
+{
+  "title": "Gallery",
+  "intro": "A glimpse of our work, events and professional milestones.",
+  "items": [
+    {
+      "title": "Compliance consultation",
+      "image": "/images/logo.png",
+      "order": 1
+    },
+    {
+      "title": "Business registration support",
+      "image": "/images/logo.png",
+      "order": 2
+    },
+    {
+      "title": "Client advisory session",
+      "image": "/images/logo.png",
+      "order": 3
+    },
+    {
+      "title": "Corporate documentation",
+      "image": "/images/logo.png",
+      "order": 4
+    }
+  ]
+}
