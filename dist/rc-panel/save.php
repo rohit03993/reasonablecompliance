@@ -259,18 +259,24 @@ switch ($type) {
         break;
 
     case 'blog_settings':
-        $current = manage_read_json('blog.json');
+        $current = manage_ensure_content('blog', 'blog.json');
+        $items = manage_blog_valid_items($current['items'] ?? []);
+        if (count($items) === 0) {
+            manage_restore_seed('blog', 'blog.json');
+            $current = manage_read_json('blog.json');
+            $items = manage_blog_valid_items($current['items'] ?? []);
+        }
         manage_write_json('blog.json', [
             'title' => trim((string) ($_POST['title'] ?? 'Our Blog')),
             'intro' => trim((string) ($_POST['intro'] ?? '')),
-            'items' => manage_blog_valid_items($current['items'] ?? []),
+            'items' => $items,
         ]);
         manage_bump_cache();
         header('Location: /rc-panel/edit-blog.php?saved=1');
         exit;
 
     case 'blog_post':
-        $current = manage_read_json('blog.json');
+        $current = manage_ensure_content('blog', 'blog.json');
         $items = manage_blog_valid_items($current['items'] ?? []);
         $originalSlug = trim((string) ($_POST['original_slug'] ?? ''));
         $title = trim((string) ($_POST['title'] ?? ''));
@@ -359,23 +365,11 @@ switch ($type) {
             header('Location: /rc-panel/?error=1');
             exit;
         }
-        $seed = manage_seed($key);
-        if ($seed === []) {
-            header('Location: /rc-panel/?error=1');
+        if (!manage_restore_seed($key, $map[$key])) {
+            $fail = $key === 'blog' ? '/rc-panel/edit-blog.php?error=restore' : '/rc-panel/?error=1';
+            header('Location: ' . $fail);
             exit;
         }
-        // For site.json preserve web3forms key if seed somehow empty
-        if ($key === 'site') {
-            $current = manage_read_json('site.json');
-            if (!empty($current['web3formsAccessKey'])) {
-                $seed['web3formsAccessKey'] = $current['web3formsAccessKey'];
-            }
-        }
-        if (!manage_write_json($map[$key], $seed)) {
-            header('Location: /rc-panel/?error=1');
-            exit;
-        }
-        manage_bump_cache();
         $redirects = [
             'blog' => '/rc-panel/edit-blog.php?repaired=1',
             'services' => '/rc-panel/edit-services.php?saved=1',

@@ -1,0 +1,29 @@
+{
+  "items": [
+    {
+      "question": "Which businesses do you serve?",
+      "answer": "We work with startups, SMEs, private limited companies, LLPs, OPCs, partnerships and established enterprises across India. Whether you are incorporating for the first time or managing ongoing statutory compliance, we tailor support to your structure and industry.",
+      "order": 1
+    },
+    {
+      "question": "Do you provide ongoing compliance support?",
+      "answer": "Yes. We offer both one-time services (such as company registration or a single filing) and annual / ongoing compliance management — including ROC filings, secretarial documentation, GST support and regulatory advisory as your business grows.",
+      "order": 2
+    },
+    {
+      "question": "Can you help with business registration?",
+      "answer": "Absolutely. We assist with company incorporation (Private Limited, LLP, OPC, Partnership, Section 8), GST registration and amendment, MSME, FSSAI, PAN & TAN, professional tax, shops & establishment, and related statutory registrations.",
+      "order": 3
+    },
+    {
+      "question": "Do you provide legal advisory?",
+      "answer": "Yes. We offer practical corporate law and regulatory advisory — including documentation support, due diligence guidance, governance advice and compliance planning — so decisions stay clear and commercially sound.",
+      "order": 4
+    },
+    {
+      "question": "How do we get started?",
+      "answer": "Book a free consultation or email us with a short note about your business. We review your needs, outline the right compliance path and timelines, then handle execution with clear updates along the way.",
+      "order": 5
+    }
+  ]
+}

@@ -3,15 +3,23 @@ require __DIR__ . '/auth.php';
 manage_require_login();
 $navCurrent = 'blog';
 
+// Force-heal corrupt blog data before rendering
 $blog = manage_ensure_content('blog', 'blog.json');
 $items = manage_blog_valid_items($blog['items'] ?? []);
+if (count($items) === 0) {
+    manage_restore_seed('blog', 'blog.json');
+    $blog = manage_read_json('blog.json');
+    $items = manage_blog_valid_items($blog['items'] ?? []);
+}
 usort($items, fn($a, $b) => strcmp((string) ($b['date'] ?? ''), (string) ($a['date'] ?? '')));
 
 $saved = ($_GET['saved'] ?? '') === '1';
 $deleted = ($_GET['deleted'] ?? '') === '1';
 $repaired = ($_GET['repaired'] ?? '') === '1';
-$flushed = ($_GET['flushed'] ?? '') === '1';
-$dataPath = manage_data_dir() . '/blog.json';
+$error = (string) ($_GET['error'] ?? '');
+$dataPath = manage_data_dir() . DIRECTORY_SEPARATOR . 'blog.json';
+$seedPath = manage_seed_file('blog');
+$rawCount = is_array($blog['items'] ?? null) ? count($blog['items']) : 0;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -29,7 +37,7 @@ $dataPath = manage_data_dir() . '/blog.json';
       <div class="page-head">
         <div>
           <h1>Blog</h1>
-          <p class="help" style="margin:0">Same posts as the live website. Edit one at a time.</p>
+          <p class="help" style="margin:0">Live website posts. Empty/corrupt rows are auto-removed.</p>
         </div>
         <div class="actions">
           <a class="btn secondary" href="/rc-panel/flush-cache.php">Flush cache</a>
@@ -37,10 +45,10 @@ $dataPath = manage_data_dir() . '/blog.json';
         </div>
       </div>
 
-      <?php if ($saved): ?><p class="success">Saved. Use Flush cache if the public page still looks old.</p><?php endif; ?>
+      <?php if ($saved): ?><p class="success">Saved.</p><?php endif; ?>
       <?php if ($deleted): ?><p class="success">Post deleted.</p><?php endif; ?>
-      <?php if ($repaired): ?><p class="success">Blog restored from packaged site content and synced.</p><?php endif; ?>
-      <?php if ($flushed): ?><p class="success">Cache flushed.</p><?php endif; ?>
+      <?php if ($repaired): ?><p class="success">Blog restored from packaged JSON seed (<?= count($items) ?> posts).</p><?php endif; ?>
+      <?php if ($error === 'restore'): ?><p class="error">Restore failed — seed file missing or data folder not writable.</p><?php endif; ?>
 
       <div class="card">
         <h2>Blog page settings</h2>
@@ -57,17 +65,21 @@ $dataPath = manage_data_dir() . '/blog.json';
           <h2 style="margin:0">All posts (<?= count($items) ?>)</h2>
           <div class="actions">
             <a class="btn secondary" href="/blog" target="_blank" rel="noopener">View blog ↗</a>
-            <form class="inline-form" method="post" action="/rc-panel/save.php" onsubmit="return confirm('Reload blog posts from the packaged website content?');">
+            <form class="inline-form" method="post" action="/rc-panel/save.php">
               <input type="hidden" name="type" value="content_reload" />
               <input type="hidden" name="key" value="blog" />
               <button type="submit" class="btn secondary">Repair / re-sync</button>
             </form>
           </div>
         </div>
-        <p class="small" style="margin-top:0">Data file: <code><?= manage_h($dataPath) ?></code></p>
+        <p class="small" style="margin-top:0">
+          Data: <code><?= manage_h($dataPath) ?></code><br />
+          Seed: <code><?= manage_h($seedPath) ?></code> <?= is_file($seedPath) ? '(found)' : '(MISSING)' ?><br />
+          Raw rows in file: <?= (int) $rawCount ?> · Valid posts shown: <?= count($items) ?>
+        </p>
 
         <?php if (count($items) === 0): ?>
-          <p class="error">No posts found. Click <strong>Repair / re-sync</strong>.</p>
+          <p class="error">No valid posts. Click <strong>Repair / re-sync</strong>. If that fails, redeploy <code>rc-panel/seed/blog.json</code>.</p>
         <?php else: ?>
           <div class="table-wrap">
             <table class="posts-table">
@@ -98,7 +110,7 @@ $dataPath = manage_data_dir() . '/blog.json';
                       </div>
                     </td>
                     <td>
-                      <strong><?= manage_h($title !== '' ? $title : 'Untitled') ?></strong>
+                      <strong><?= manage_h($title) ?></strong>
                       <div class="small">/blog/<?= manage_h($slug) ?></div>
                     </td>
                     <td><span class="badge <?= $status === 'draft' ? 'badge-new' : '' ?>"><?= $status === 'draft' ? 'Draft' : 'Published' ?></span></td>
@@ -106,7 +118,7 @@ $dataPath = manage_data_dir() . '/blog.json';
                     <td class="actions">
                       <a class="btn-link" href="/rc-panel/edit-blog-post.php?slug=<?= urlencode($slug) ?>">Edit</a>
                       <a class="btn-link" href="/blog/read?slug=<?= urlencode($slug) ?>" target="_blank" rel="noopener">View</a>
-                      <form class="inline-form" method="post" action="/rc-panel/save.php" onsubmit="return confirm('Delete this post permanently?');">
+                      <form class="inline-form" method="post" action="/rc-panel/save.php" onsubmit="return confirm('Delete this post?');">
                         <input type="hidden" name="type" value="blog_delete" />
                         <input type="hidden" name="slug" value="<?= manage_h($slug) ?>" />
                         <button type="submit" class="btn-link danger">Delete</button>

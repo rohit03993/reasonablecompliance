@@ -7,22 +7,8 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 
 function manage_data_dir(): string
 {
-    $candidates = [];
-    $candidates[] = dirname(__DIR__) . '/data';
-    if (!empty($_SERVER['DOCUMENT_ROOT'])) {
-        $candidates[] = rtrim((string) $_SERVER['DOCUMENT_ROOT'], '/\\') . '/data';
-    }
-    foreach ($candidates as $dir) {
-        if ($dir && is_dir($dir) && is_writable($dir)) {
-            return $dir;
-        }
-    }
-    foreach ($candidates as $dir) {
-        if ($dir && is_dir($dir)) {
-            return $dir;
-        }
-    }
-    return dirname(__DIR__) . '/data';
+    // Always use the data folder next to rc-panel (public_html/data)
+    return dirname(__DIR__) . DIRECTORY_SEPARATOR . 'data';
 }
 
 function manage_require_login(): void
@@ -33,13 +19,8 @@ function manage_require_login(): void
     }
 }
 
-function manage_read_json(string $file): array
+function manage_decode_json_string(string $raw): array
 {
-    $path = manage_data_dir() . '/' . $file;
-    if (!is_file($path)) {
-        return [];
-    }
-    $raw = (string) file_get_contents($path);
     if ($raw === '') {
         return [];
     }
@@ -47,10 +28,17 @@ function manage_read_json(string $file): array
         $raw = substr($raw, 3);
     }
     $data = json_decode($raw, true);
-    if (!is_array($data)) {
+    return is_array($data) ? $data : [];
+}
+
+function manage_read_json(string $file): array
+{
+    $path = manage_data_dir() . DIRECTORY_SEPARATOR . $file;
+    if (!is_file($path)) {
         return [];
     }
-    return $data;
+    $raw = (string) @file_get_contents($path);
+    return manage_decode_json_string($raw);
 }
 
 function manage_write_json(string $file, array $data): bool
@@ -59,14 +47,26 @@ function manage_write_json(string $file, array $data): bool
     if (!is_dir($dir)) {
         @mkdir($dir, 0755, true);
     }
-    $path = $dir . '/' . $file;
+    $path = $dir . DIRECTORY_SEPARATOR . $file;
     $json = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     if ($json === false) {
         return false;
     }
-    $ok = file_put_contents($path, $json . "\n", LOCK_EX) !== false;
+    $tmp = $path . '.tmp.' . getmypid();
+    $written = @file_put_contents($tmp, $json . "\n", LOCK_EX);
+    if ($written === false) {
+        return false;
+    }
+    if (!@rename($tmp, $path)) {
+        @unlink($path);
+        $ok = @rename($tmp, $path);
+        @unlink($tmp);
+        if (!$ok) {
+            return false;
+        }
+    }
     @chmod($path, 0644);
-    return $ok;
+    return true;
 }
 
 function manage_h(?string $value): string
@@ -74,26 +74,108 @@ function manage_h(?string $value): string
     return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
 }
 
-function manage_seed_all(): array
+function manage_seed_file(string $key): string
 {
-    static $seed = null;
-    if ($seed === null) {
-        $path = __DIR__ . '/seed-data.php';
-        $seed = is_file($path) ? require $path : [];
-        if (!is_array($seed)) {
-            $seed = [];
-        }
-    }
-    return $seed;
+    return __DIR__ . DIRECTORY_SEPARATOR . 'seed' . DIRECTORY_SEPARATOR . $key . '.json';
 }
 
 function manage_seed(string $key): array
 {
-    $all = manage_seed_all();
-    return is_array($all[$key] ?? null) ? $all[$key] : [];
+    $jsonPath = manage_seed_file($key);
+    if (is_file($jsonPath)) {
+        $raw = (string) @file_get_contents($jsonPath);
+        $data = manage_decode_json_string($raw);
+        if ($data !== []) {
+            return $data;
+        }
+    }
+    // Fallback to embedded PHP seed
+    $phpPath = __DIR__ . DIRECTORY_SEPARATOR . 'seed-data.php';
+    if (is_file($phpPath)) {
+        $all = require $phpPath;
+        if (is_array($all) && isset($all[$key]) && is_array($all[$key])) {
+            return $all[$key];
+        }
+    }
+    return [];
 }
 
-/** Keep only real blog posts (must have title or slug). */
+/** Copy packaged seed JSON over live data file. Returns true only if read-back looks valid. */
+function manage_restore_seed(string $key, string $file): bool
+{
+    $seedPath = manage_seed_file($key);
+    $dest = manage_data_dir() . DIRECTORY_SEPARATOR . $file;
+    $seed = manage_seed($key);
+    if ($seed === []) {
+        return false;
+    }
+
+    // Prefer binary copy of JSON seed when available
+    if (is_file($seedPath)) {
+        $dir = manage_data_dir();
+        if (!is_dir($dir)) {
+            @mkdir($dir, 0755, true);
+        }
+        if (!@copy($seedPath, $dest)) {
+            // Fall back to encoded write
+            if (!manage_write_json($file, $seed)) {
+                return false;
+            }
+        } else {
+            @chmod($dest, 0644);
+        }
+    } elseif (!manage_write_json($file, $seed)) {
+        return false;
+    }
+
+    // Preserve web3forms key for site.json
+    if ($key === 'site') {
+        $live = manage_read_json('site.json');
+        $seedSite = $seed;
+        if (!empty($live['web3formsAccessKey'])) {
+            $seedSite['web3formsAccessKey'] = $live['web3formsAccessKey'];
+            manage_write_json('site.json', $seedSite);
+        }
+    }
+
+    $verify = manage_read_json($file);
+    if ($key === 'blog' || $key === 'services' || $key === 'faqs' || $key === 'testimonials') {
+        $items = $verify['items'] ?? null;
+        if (!is_array($items) || count($items) === 0) {
+            return false;
+        }
+        // Ensure at least one item has a real title/question/quote
+        $ok = false;
+        foreach ($items as $item) {
+            if (!is_array($item)) {
+                continue;
+            }
+            if ($key === 'blog' && trim((string) ($item['title'] ?? '')) !== '') {
+                $ok = true;
+                break;
+            }
+            if ($key === 'services' && trim((string) ($item['title'] ?? '')) !== '') {
+                $ok = true;
+                break;
+            }
+            if ($key === 'faqs' && trim((string) ($item['question'] ?? '')) !== '') {
+                $ok = true;
+                break;
+            }
+            if ($key === 'testimonials' && trim((string) ($item['quote'] ?? '')) !== '') {
+                $ok = true;
+                break;
+            }
+        }
+        if (!$ok) {
+            return false;
+        }
+    }
+
+    manage_bump_cache();
+    return true;
+}
+
 function manage_blog_valid_items(array $items): array
 {
     $out = [];
@@ -110,6 +192,9 @@ function manage_blog_valid_items(array $items): array
             $slug = strtolower((string) preg_replace('/[^a-z0-9]+/i', '-', $title));
             $slug = trim($slug, '-');
             $item['slug'] = $slug;
+        }
+        if ($title === '') {
+            continue; // slug-only junk
         }
         if (!isset($item['status']) || $item['status'] === '') {
             $item['status'] = 'published';
@@ -129,72 +214,63 @@ function manage_blog_normalize_and_save(array $blog): array
     return $blog;
 }
 
-/** If live JSON is empty/corrupt, restore packaged seed for that key. */
 function manage_ensure_content(string $key, string $file): array
 {
     $data = manage_read_json($file);
-    $seed = manage_seed($key);
-    if ($seed === []) {
-        return $data;
-    }
+    $needsRestore = false;
 
-    $liveItems = $data['items'] ?? null;
-    $seedItems = $seed['items'] ?? null;
-
-    if (is_array($seedItems)) {
-        $validLive = [];
-        if ($key === 'blog') {
-            $validLive = manage_blog_valid_items(is_array($liveItems) ? $liveItems : []);
-        } elseif (is_array($liveItems)) {
-            foreach ($liveItems as $item) {
-                if (!is_array($item)) {
-                    continue;
-                }
-                // services need title; faqs need question; testimonials need quote
-                if ($key === 'services' && trim((string) ($item['title'] ?? '')) !== '') {
-                    $validLive[] = $item;
-                } elseif ($key === 'faqs' && trim((string) ($item['question'] ?? '')) !== '') {
-                    $validLive[] = $item;
-                } elseif ($key === 'testimonials' && trim((string) ($item['quote'] ?? '')) !== '') {
-                    $validLive[] = $item;
-                } elseif ($key === 'gallery' && (trim((string) ($item['title'] ?? '')) !== '' || trim((string) ($item['image'] ?? '')) !== '')) {
-                    $validLive[] = $item;
-                }
-            }
-        }
-
-        if (count($validLive) === 0 && count($seedItems) > 0) {
-            manage_write_json($file, $seed);
-            manage_bump_cache();
-            return $seed;
-        }
-
-        if ($key === 'blog' && count($validLive) > 0 && count($validLive) !== count(is_array($liveItems) ? $liveItems : [])) {
-            $data['items'] = $validLive;
+    if ($key === 'blog') {
+        $valid = manage_blog_valid_items($data['items'] ?? []);
+        $rawCount = is_array($data['items'] ?? null) ? count($data['items']) : 0;
+        if (count($valid) === 0 || ($rawCount > 0 && count($valid) === 0)) {
+            $needsRestore = true;
+        } elseif ($rawCount !== count($valid)) {
+            // Strip junk empty rows and save cleaned version
+            $data['items'] = $valid;
             manage_write_json($file, $data);
             return $data;
         }
+    } elseif (in_array($key, ['services', 'faqs', 'testimonials'], true)) {
+        $items = is_array($data['items'] ?? null) ? $data['items'] : [];
+        $valid = 0;
+        foreach ($items as $item) {
+            if (!is_array($item)) {
+                continue;
+            }
+            if ($key === 'services' && trim((string) ($item['title'] ?? '')) !== '') {
+                $valid++;
+            }
+            if ($key === 'faqs' && trim((string) ($item['question'] ?? '')) !== '') {
+                $valid++;
+            }
+            if ($key === 'testimonials' && trim((string) ($item['quote'] ?? '')) !== '') {
+                $valid++;
+            }
+        }
+        if ($valid === 0) {
+            $needsRestore = true;
+        }
+    }
+
+    if ($needsRestore) {
+        manage_restore_seed($key, $file);
+        return manage_read_json($file);
     }
 
     return $data;
 }
 
-function manage_cache_version_path(): string
-{
-    return manage_data_dir() . '/cache-version.json';
-}
-
 function manage_bump_cache(): string
 {
     $version = (string) time();
-    $payload = [
+    manage_write_json('cache-version.json', [
         'version' => $version,
         'updatedAt' => date('c'),
-    ];
-    manage_write_json('cache-version.json', $payload);
+    ]);
     if (function_exists('opcache_reset')) {
         @opcache_reset();
     }
+    clearstatcache(true);
     return $version;
 }
 
@@ -205,26 +281,16 @@ function manage_flush_cache(): array
     $notes[] = 'Cache version bumped to ' . $version;
 
     if (function_exists('opcache_reset')) {
-        $notes[] = opcache_reset() ? 'PHP OPcache cleared' : 'PHP OPcache reset attempted';
+        $notes[] = 'PHP OPcache cleared';
     } else {
         $notes[] = 'PHP OPcache not available on this host';
     }
 
-    // Touch JSON files so CDNs/proxies see fresh mtime
     $dir = manage_data_dir();
-    foreach (glob($dir . '/*.json') ?: [] as $file) {
+    foreach (glob($dir . DIRECTORY_SEPARATOR . '*.json') ?: [] as $file) {
         @touch($file);
     }
-    $notes[] = 'Touched data JSON files';
-
-    // LiteSpeed / common cache folders under public_html if present
-    $root = dirname(manage_data_dir());
-    foreach (['/cache', '/lscache', '/tmp/cache'] as $rel) {
-        $path = $root . $rel;
-        if (is_dir($path)) {
-            $notes[] = 'Found cache folder: ' . $path . ' (clear via Hostinger if needed)';
-        }
-    }
+    $notes[] = 'Touched data JSON files in ' . $dir;
 
     return ['version' => $version, 'notes' => $notes];
 }

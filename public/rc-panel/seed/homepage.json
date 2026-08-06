@@ -1,0 +1,68 @@
+{
+  "hero": {
+    "headline": "End-to-End Corporate Legal & Regulatory Compliance Solutions",
+    "subheadline": "Your one-stop partner for company registration, ROC filings, GST, FEMA, trademarks and ongoing compliance across India.",
+    "intro": "Reasonable Compliance helps startups, SMEs and growing businesses stay legally secure without complexity. From incorporation and statutory registrations to secretarial compliance, tax filings and regulatory advisory — we deliver practical, timely support so you can focus on growth."
+  },
+  "stats": [
+    { "value": "End-to-End", "label": "Compliance Support" },
+    { "value": "India-Wide", "label": "Business Coverage" },
+    { "value": "Startup+", "label": "SME Friendly" },
+    { "value": "On-Time", "label": "Filings & Advice" }
+  ],
+  "trustTitle": "Why Businesses Trust Reasonable Compliance",
+  "trustBullets": [
+    "Experienced corporate compliance professionals",
+    "Client-centric, practical guidance",
+    "Affordable and transparent pricing",
+    "Timely ROC, GST and regulatory support",
+    "End-to-end compliance management",
+    "Strong focus on sustainable business growth"
+  ],
+  "whyChooseTitle": "Why Choose Us?",
+  "whyChooseBullets": [
+    "Professional and reliable legal advice",
+    "Timely compliance management",
+    "Complete corporate solutions under one roof",
+    "Transparent process with clear communication",
+    "Startup-friendly and scalable approach",
+    "Dedicated support at every stage"
+  ],
+  "industriesTitle": "Industries We Serve",
+  "industriesIntro": "We support businesses across diverse sectors with tailored compliance solutions:",
+  "industries": [
+    "Startups",
+    "IT & Technology",
+    "Manufacturing",
+    "Healthcare",
+    "Education",
+    "E-commerce",
+    "Food & Hospitality",
+    "Professional Services",
+    "Real Estate",
+    "Consultancy Firms"
+  ],
+  "processTitle": "Our Process",
+  "processSteps": [
+    {
+      "title": "Understanding Your Business",
+      "description": "We evaluate your structure, goals and compliance obligations to identify what matters most."
+    },
+    {
+      "title": "Compliance Planning",
+      "description": "Our experts prepare a clear, customized compliance roadmap with timelines and priorities."
+    },
+    {
+      "title": "Execution",
+      "description": "We handle registrations, documentation, filings and regulatory procedures end to end."
+    },
+    {
+      "title": "Ongoing Support",
+      "description": "Continuous monitoring and advisory keep your business legally secure as you scale."
+    }
+  ],
+  "finalCta": {
+    "headline": "Let's Build a Compliant Business Together",
+    "text": "Whether you are launching a new venture or need reliable ongoing compliance support, Reasonable Compliance is ready to help."
+  }
+}
