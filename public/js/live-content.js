@@ -57,7 +57,7 @@
         return path + (cacheVersion ? ('?v=' + encodeURIComponent(cacheVersion)) : '');
       }
 
-      const [site, homepage, about, contact, faqs, blog, testimonials] = await Promise.all([
+      const [site, homepage, about, contact, faqs, blog, testimonials, social] = await Promise.all([
         fetch(dataUrl('/data/site.json'), { cache: 'no-store' }).then(function (r) { return r.json(); }),
         fetch(dataUrl('/data/homepage.json'), { cache: 'no-store' }).then(function (r) { return r.json(); }),
         fetch(dataUrl('/data/about.json'), { cache: 'no-store' }).then(function (r) { return r.json(); }),
@@ -65,9 +65,10 @@
         fetch(dataUrl('/data/faqs.json'), { cache: 'no-store' }).then(function (r) { return r.json(); }),
         fetch(dataUrl('/data/blog.json'), { cache: 'no-store' }).then(function (r) { return r.json(); }).catch(function () { return null; }),
         fetch(dataUrl('/data/testimonials.json'), { cache: 'no-store' }).then(function (r) { return r.json(); }).catch(function () { return null; }),
+        fetch(dataUrl('/data/social.json'), { cache: 'no-store' }).then(function (r) { return r.json(); }).catch(function () { return null; }),
       ]);
 
-      window.__RC_CONTENT__ = { site: site, homepage: homepage, about: about, contact: contact, faqs: faqs, blog: blog, testimonials: testimonials };
+      window.__RC_CONTENT__ = { site: site, homepage: homepage, about: about, contact: contact, faqs: faqs, blog: blog, testimonials: testimonials, social: social };
 
       setText('site.siteName', site.siteName);
       setText('site.tagline', site.tagline);
@@ -224,6 +225,48 @@
           el.setAttribute('href', 'tel:' + String(site.phone).replace(/\s/g, ''));
         }
       });
+
+      // Footer social icons: always visible; become real links when admin URLs are set
+      if (social) {
+        ['facebook', 'instagram', 'linkedin', 'twitter'].forEach(function (key) {
+          var el = document.querySelector('[data-social="' + key + '"]');
+          if (!el) return;
+          var url = social[key] ? String(social[key]).trim() : '';
+          var labels = {
+            facebook: 'Facebook',
+            instagram: 'Instagram',
+            linkedin: 'LinkedIn',
+            twitter: 'X (Twitter)',
+          };
+          var label = labels[key] || key;
+          var html = el.innerHTML;
+          var cls = String(el.className || '')
+            .replace(/\bcursor-default\b/g, '')
+            .replace(/\bopacity-55\b/g, '')
+            .replace(/\s+/g, ' ')
+            .trim();
+
+          if (url) {
+            var a = document.createElement('a');
+            a.href = url;
+            a.target = '_blank';
+            a.rel = 'noopener noreferrer';
+            a.setAttribute('aria-label', label);
+            a.setAttribute('data-social', key);
+            a.className = cls;
+            a.innerHTML = html;
+            el.replaceWith(a);
+          } else if (el.tagName === 'A') {
+            var span = document.createElement('span');
+            span.setAttribute('aria-label', label + ' (link coming soon)');
+            span.setAttribute('title', label + ' — add link in admin');
+            span.setAttribute('data-social', key);
+            span.className = cls + ' cursor-default opacity-55';
+            span.innerHTML = html;
+            el.replaceWith(span);
+          }
+        });
+      }
     } catch (e) {
       // Keep build-time content if live JSON is unavailable
       console.warn('Live content not applied', e);
