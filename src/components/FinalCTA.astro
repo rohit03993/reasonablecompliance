@@ -1,16 +1,16 @@
 ---
-import site from '../data/site.json';
-import homepage from '../data/homepage.json';
+import site from '../../public/data/site.json';
+import homepage from '../../public/data/homepage.json';
 
 const { finalCta } = homepage;
 ---
 
 <section class="section-pad bg-surface-alt" id="consult">
   <div class="container-rc reveal text-center">
-    <h2 class="text-3xl font-bold sm:text-4xl">{finalCta.headline}</h2>
-    <p class="mx-auto mt-4 max-w-2xl text-muted">{finalCta.text}</p>
+    <h2 class="text-3xl font-bold sm:text-4xl" data-cms="homepage.finalCta.headline">{finalCta.headline}</h2>
+    <p class="mx-auto mt-4 max-w-2xl text-muted" data-cms="homepage.finalCta.text">{finalCta.text}</p>
     <p class="mt-6">
-      <a class="font-semibold text-emerald hover:text-emerald-dark" href={`mailto:${site.email}`}>
+      <a class="font-semibold text-emerald hover:text-emerald-dark" href={`mailto:${site.email}`} data-cms="site.email" data-cms-href="site.email">
         {site.email}
       </a>
     </p>

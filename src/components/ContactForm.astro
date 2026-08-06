@@ -1,31 +1,16 @@
 ---
-import contact from '../data/contact.json';
-import site from '../data/site.json';
-
-const accessKey = site.web3formsAccessKey || '';
-const hasKey = Boolean(accessKey && !accessKey.includes('YOUR_'));
+import contact from '../../public/data/contact.json';
 ---
 
 <form
   name="consultation"
   method="POST"
-  action="https://api.web3forms.com/submit"
   class="space-y-5 rounded-xl border border-navy/10 bg-white p-6 shadow-sm sm:p-8"
   id="consultation-form"
 >
-  <input type="hidden" name="access_key" value={accessKey} />
   <input type="hidden" name="subject" value="New consultation request — Reasonable Compliance" />
   <input type="hidden" name="from_name" value="Reasonable Compliance Website" />
   <input type="checkbox" name="botcheck" class="hidden" style="display: none" tabindex="-1" autocomplete="off" />
-
-  {
-    !hasKey && (
-      <p class="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">
-        Form email is not connected yet. Add your Web3Forms access key in
-        <code class="font-semibold">src/data/site.json</code> → <code class="font-semibold">web3formsAccessKey</code>.
-      </p>
-    )
-  }
 
   <div>
     <label for="name" class="mb-1.5 block text-sm font-medium text-navy">Full name</label>
@@ -116,20 +101,22 @@ const hasKey = Boolean(accessKey && !accessKey.includes('YOUR_'));
       success.classList.add('hidden');
       if (submitBtn) submitBtn.disabled = true;
 
-      const accessKeyInput = form.querySelector('input[name="access_key"]') as HTMLInputElement | null;
-      const key = accessKeyInput?.value?.trim() || '';
-
-      if (!key || key.includes('YOUR_')) {
-        error.textContent =
-          'Form is not connected yet. Add your Web3Forms access key, then rebuild and upload.';
-        error.classList.remove('hidden');
-        if (submitBtn) submitBtn.disabled = false;
-        return;
-      }
-
       try {
+        const siteRes = await fetch('/data/site.json', { cache: 'no-store' });
+        const site = await siteRes.json();
+        const key = (site.web3formsAccessKey || '').trim();
+
+        if (!key || key.includes('YOUR_')) {
+          error.textContent = 'Form is not connected yet. Contact the site admin.';
+          error.classList.remove('hidden');
+          return;
+        }
+
         const formData = new FormData(form);
-        const payload = Object.fromEntries(formData.entries());
+        const payload: Record<string, string> = { access_key: key };
+        formData.forEach((value, name) => {
+          payload[name] = String(value);
+        });
 
         const response = await fetch('https://api.web3forms.com/submit', {
           method: 'POST',

@@ -19,7 +19,7 @@ collections:
     files:
       - name: site
         label: Brand & Contact
-        file: src/data/site.json
+        file: public/data/site.json
         fields:
           - { label: Site Name, name: siteName, widget: string }
           - { label: Tagline, name: tagline, widget: string }
@@ -40,7 +40,7 @@ collections:
     files:
       - name: homepage
         label: Homepage
-        file: src/data/homepage.json
+        file: public/data/homepage.json
         fields:
           - label: Hero section
             name: hero
@@ -85,7 +85,7 @@ collections:
 
       - name: about
         label: About page
-        file: src/data/about.json
+        file: public/data/about.json
         fields:
           - { label: Page title, name: title, widget: string }
           - { label: SEO title, name: seoTitle, widget: string }
@@ -102,7 +102,7 @@ collections:
 
       - name: contact
         label: Contact page
-        file: src/data/contact.json
+        file: public/data/contact.json
         fields:
           - { label: Page headline, name: headline, widget: string }
           - { label: Supporting text, name: supportingText, widget: text }
@@ -117,7 +117,7 @@ collections:
     files:
       - name: services
         label: All services
-        file: src/data/services.json
+        file: public/data/services.json
         fields:
           - label: Services
             name: items
@@ -142,7 +142,7 @@ collections:
     files:
       - name: faqs
         label: All FAQs
-        file: src/data/faqs.json
+        file: public/data/faqs.json
         fields:
           - label: FAQs
             name: items

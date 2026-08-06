@@ -1,0 +1,24 @@
+{
+  "items": [
+    {
+      "question": "Which businesses do you serve?",
+      "answer": "We work with startups, SMEs, private limited companies, LLPs, OPCs, and established enterprises across India.",
+      "order": 1
+    },
+    {
+      "question": "Do you provide ongoing compliance support?",
+      "answer": "Yes. We offer both one-time services and annual compliance management.",
+      "order": 2
+    },
+    {
+      "question": "Can you help with business registration?",
+      "answer": "Absolutely. We assist with company incorporation, LLP registration, GST, MSME, FSSAI, and other statutory registrations.",
+      "order": 3
+    },
+    {
+      "question": "Do you provide legal advisory?",
+      "answer": "Yes. We offer practical legal and regulatory advisory tailored to your business needs.",
+      "order": 4
+    }
+  ]
+}

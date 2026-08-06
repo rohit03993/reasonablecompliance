@@ -1,5 +1,5 @@
 ---
-import site from '../data/site.json';
+import site from '../../public/data/site.json';
 
 const phoneReady = !site.phone.includes('X');
 const waReady = !site.whatsapp.includes('X');
@@ -15,6 +15,7 @@ const waHref = waReady ? `https://wa.me/${site.whatsapp.replace(/\D/g, '')}` : '
   <div class="grid grid-cols-3 divide-x divide-navy/10">
     <a
       href={telHref}
+      data-cms-phone
       class="flex min-h-14 flex-col items-center justify-center gap-0.5 px-2 text-navy transition active:bg-surface-alt"
     >
       <svg class="h-5 w-5 text-emerald" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
@@ -24,6 +25,7 @@ const waHref = waReady ? `https://wa.me/${site.whatsapp.replace(/\D/g, '')}` : '
     </a>
     <a
       href={waHref}
+      data-cms-whatsapp
       class="flex min-h-14 flex-col items-center justify-center gap-0.5 px-2 text-navy transition active:bg-surface-alt"
       rel={waReady ? 'noopener noreferrer' : undefined}
       target={waReady ? '_blank' : undefined}
@@ -48,6 +50,7 @@ const waHref = waReady ? `https://wa.me/${site.whatsapp.replace(/\D/g, '')}` : '
 <!-- Desktop floating WhatsApp button -->
 <a
   href={waHref}
+  data-cms-whatsapp
   class="fixed bottom-6 right-6 z-50 hidden h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg transition hover:scale-105 hover:bg-[#1ebe57] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#25D366] md:inline-flex"
   aria-label="Chat on WhatsApp"
   rel={waReady ? 'noopener noreferrer' : undefined}

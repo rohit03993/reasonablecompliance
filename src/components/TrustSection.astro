@@ -1,5 +1,5 @@
 ---
-import homepage from '../data/homepage.json';
+import homepage from '../../public/data/homepage.json';
 
 const { trustTitle, trustBullets, whyChooseTitle, whyChooseBullets } = homepage;
 ---
@@ -8,8 +8,8 @@ const { trustTitle, trustBullets, whyChooseTitle, whyChooseBullets } = homepage;
   <div class="container-rc grid gap-14 lg:grid-cols-2">
     <div class="reveal">
       <p class="text-sm font-semibold uppercase tracking-wider text-emerald">Trust</p>
-      <h2 class="mt-2 text-3xl font-bold sm:text-4xl">{trustTitle}</h2>
-      <ul class="mt-8 space-y-3">
+      <h2 class="mt-2 text-3xl font-bold sm:text-4xl" data-cms="homepage.trustTitle">{trustTitle}</h2>
+      <ul class="mt-8 space-y-3" data-cms-list="homepage.trustBullets">
         {
           trustBullets.map((item) => (
             <li class="flex gap-3 text-sm leading-relaxed sm:text-base">
@@ -22,8 +22,8 @@ const { trustTitle, trustBullets, whyChooseTitle, whyChooseBullets } = homepage;
     </div>
     <div class="reveal">
       <p class="text-sm font-semibold uppercase tracking-wider text-emerald">Partnership</p>
-      <h2 class="mt-2 text-3xl font-bold sm:text-4xl">{whyChooseTitle}</h2>
-      <ul class="mt-8 space-y-3">
+      <h2 class="mt-2 text-3xl font-bold sm:text-4xl" data-cms="homepage.whyChooseTitle">{whyChooseTitle}</h2>
+      <ul class="mt-8 space-y-3" data-cms-list="homepage.whyChooseBullets">
         {
           whyChooseBullets.map((item) => (
             <li class="flex gap-3 text-sm leading-relaxed sm:text-base">

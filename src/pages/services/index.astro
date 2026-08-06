@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import servicesData from '../../data/services.json';
-import site from '../../data/site.json';
+import servicesData from '../../../public/data/services.json';
+import site from '../../../public/data/site.json';
 
 const sorted = [...servicesData.items].sort((a, b) => a.order - b.order);
 ---
