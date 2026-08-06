@@ -262,14 +262,14 @@ switch ($type) {
         manage_write_json('blog.json', [
             'title' => trim((string) ($_POST['title'] ?? 'Our Blog')),
             'intro' => trim((string) ($_POST['intro'] ?? '')),
-            'items' => $current['items'] ?? [],
+            'items' => manage_blog_valid_items($current['items'] ?? []),
         ]);
         header('Location: /rc-panel/edit-blog.php?saved=1');
         exit;
 
     case 'blog_post':
         $current = manage_read_json('blog.json');
-        $items = $current['items'] ?? [];
+        $items = manage_blog_valid_items($current['items'] ?? []);
         $originalSlug = trim((string) ($_POST['original_slug'] ?? ''));
         $title = trim((string) ($_POST['title'] ?? ''));
         if ($title === '') {
@@ -309,12 +309,11 @@ switch ($type) {
             $next[] = $item;
         }
         $next[] = $newPost;
-        usort($next, fn($a, $b) => strcmp((string) ($b['date'] ?? ''), (string) ($a['date'] ?? '')));
 
-        manage_write_json('blog.json', [
+        manage_blog_normalize_and_save([
             'title' => $current['title'] ?? 'Our Blog',
             'intro' => $current['intro'] ?? '',
-            'items' => array_values($next),
+            'items' => $next,
         ]);
         header('Location: /rc-panel/edit-blog.php?saved=1');
         exit;
@@ -323,15 +322,54 @@ switch ($type) {
         $current = manage_read_json('blog.json');
         $slug = trim((string) ($_POST['slug'] ?? ''));
         $items = array_values(array_filter(
-            $current['items'] ?? [],
+            manage_blog_valid_items($current['items'] ?? []),
             fn($item) => ($item['slug'] ?? '') !== $slug
         ));
-        manage_write_json('blog.json', [
+        manage_blog_normalize_and_save([
             'title' => $current['title'] ?? 'Our Blog',
             'intro' => $current['intro'] ?? '',
             'items' => $items,
         ]);
         header('Location: /rc-panel/edit-blog.php?deleted=1');
+        exit;
+
+    case 'blog_repair':
+        $current = manage_read_json('blog.json');
+        $seedPath = __DIR__ . '/seed/blog.json';
+        $seedRaw = is_file($seedPath) ? (string) file_get_contents($seedPath) : '';
+        if (strncmp($seedRaw, "\xEF\xBB\xBF", 3) === 0) {
+            $seedRaw = substr($seedRaw, 3);
+        }
+        $seed = json_decode($seedRaw, true);
+        if (!is_array($seed) || !isset($seed['items']) || !is_array($seed['items'])) {
+            header('Location: /rc-panel/edit-blog.php?error=1');
+            exit;
+        }
+        $force = !empty($_POST['force']);
+        $existing = [];
+        foreach (manage_blog_valid_items($current['items'] ?? []) as $item) {
+            $existing[(string) $item['slug']] = $item;
+        }
+        $seedItems = manage_blog_valid_items($seed['items']);
+        if ($force || count($existing) === 0) {
+            $existing = [];
+            foreach ($seedItems as $seedItem) {
+                $existing[(string) $seedItem['slug']] = $seedItem;
+            }
+        } else {
+            foreach ($seedItems as $seedItem) {
+                $s = (string) ($seedItem['slug'] ?? '');
+                if ($s !== '' && !isset($existing[$s])) {
+                    $existing[$s] = $seedItem;
+                }
+            }
+        }
+        manage_blog_normalize_and_save([
+            'title' => trim((string) ($current['title'] ?? $seed['title'] ?? 'Our Blog')) ?: 'Our Blog',
+            'intro' => trim((string) ($current['intro'] ?? $seed['intro'] ?? '')),
+            'items' => array_values($existing),
+        ]);
+        header('Location: /rc-panel/edit-blog.php?repaired=1');
         exit;
 
     default:
