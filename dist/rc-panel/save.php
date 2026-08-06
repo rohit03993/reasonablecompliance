@@ -223,6 +223,7 @@ switch ($type) {
         break;
 
     case 'blog':
+        // Legacy bulk save kept for safety — prefer blog_post / blog_settings
         $bItems = [];
         $count = (int) ($_POST['count'] ?? 0);
         for ($i = 0; $i < $count; $i++) {
@@ -242,6 +243,7 @@ switch ($type) {
                 'date' => trim((string) ($_POST["date_$i"] ?? date('Y-m-d'))),
                 'author' => trim((string) ($_POST["author_$i"] ?? 'Reasonable Compliance')),
                 'image' => trim((string) ($_POST["image_$i"] ?? '')),
+                'status' => trim((string) ($_POST["status_$i"] ?? 'published')) === 'draft' ? 'draft' : 'published',
                 'seoTitle' => trim((string) ($_POST["seoTitle_$i"] ?? '')),
                 'seoDescription' => trim((string) ($_POST["seoDescription_$i"] ?? '')),
                 'body' => trim((string) ($_POST["body_$i"] ?? '')),
@@ -254,6 +256,83 @@ switch ($type) {
             'items' => $bItems,
         ]);
         break;
+
+    case 'blog_settings':
+        $current = manage_read_json('blog.json');
+        manage_write_json('blog.json', [
+            'title' => trim((string) ($_POST['title'] ?? 'Our Blog')),
+            'intro' => trim((string) ($_POST['intro'] ?? '')),
+            'items' => $current['items'] ?? [],
+        ]);
+        header('Location: /rc-panel/edit-blog.php?saved=1');
+        exit;
+
+    case 'blog_post':
+        $current = manage_read_json('blog.json');
+        $items = $current['items'] ?? [];
+        $originalSlug = trim((string) ($_POST['original_slug'] ?? ''));
+        $title = trim((string) ($_POST['title'] ?? ''));
+        if ($title === '') {
+            header('Location: /rc-panel/edit-blog.php?error=1');
+            exit;
+        }
+        $slug = trim((string) ($_POST['slug'] ?? ''));
+        if ($slug === '') {
+            $slug = strtolower(preg_replace('/[^a-z0-9]+/i', '-', $title) ?? '');
+            $slug = trim($slug, '-');
+        }
+        $slug = strtolower(preg_replace('/[^a-z0-9\-]+/i', '-', $slug) ?? '');
+        $slug = trim($slug, '-');
+
+        $newPost = [
+            'slug' => $slug,
+            'title' => $title,
+            'excerpt' => trim((string) ($_POST['excerpt'] ?? '')),
+            'date' => trim((string) ($_POST['date'] ?? date('Y-m-d'))),
+            'author' => trim((string) ($_POST['author'] ?? 'Reasonable Compliance')),
+            'image' => trim((string) ($_POST['image'] ?? '')),
+            'status' => trim((string) ($_POST['status'] ?? 'published')) === 'draft' ? 'draft' : 'published',
+            'seoTitle' => trim((string) ($_POST['seoTitle'] ?? '')),
+            'seoDescription' => trim((string) ($_POST['seoDescription'] ?? '')),
+            'body' => trim((string) ($_POST['body'] ?? '')),
+        ];
+
+        $next = [];
+        foreach ($items as $item) {
+            $s = (string) ($item['slug'] ?? '');
+            if ($originalSlug !== '' && $s === $originalSlug) {
+                continue;
+            }
+            if ($s === $slug) {
+                continue;
+            }
+            $next[] = $item;
+        }
+        $next[] = $newPost;
+        usort($next, fn($a, $b) => strcmp((string) ($b['date'] ?? ''), (string) ($a['date'] ?? '')));
+
+        manage_write_json('blog.json', [
+            'title' => $current['title'] ?? 'Our Blog',
+            'intro' => $current['intro'] ?? '',
+            'items' => array_values($next),
+        ]);
+        header('Location: /rc-panel/edit-blog.php?saved=1');
+        exit;
+
+    case 'blog_delete':
+        $current = manage_read_json('blog.json');
+        $slug = trim((string) ($_POST['slug'] ?? ''));
+        $items = array_values(array_filter(
+            $current['items'] ?? [],
+            fn($item) => ($item['slug'] ?? '') !== $slug
+        ));
+        manage_write_json('blog.json', [
+            'title' => $current['title'] ?? 'Our Blog',
+            'intro' => $current['intro'] ?? '',
+            'items' => $items,
+        ]);
+        header('Location: /rc-panel/edit-blog.php?deleted=1');
+        exit;
 
     default:
         header('Location: /rc-panel/?error=1');

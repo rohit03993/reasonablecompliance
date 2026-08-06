@@ -2,7 +2,9 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import blog from '../../../public/data/blog.json';
 
-const posts = [...blog.items].sort((a, b) => String(b.date).localeCompare(String(a.date)));
+const posts = [...blog.items]
+  .filter((p) => (p.status || 'published') !== 'draft')
+  .sort((a, b) => String(b.date).localeCompare(String(a.date)));
 
 function formatDate(dateStr: string) {
   try {
@@ -99,7 +101,7 @@ function formatDate(dateStr: string) {
   async function refreshBlogList() {
     try {
       const blog = await fetch('/data/blog.json', { cache: 'no-store' }).then((r) => r.json());
-      const posts = (blog.items || []).slice().sort((a, b) => String(b.date).localeCompare(String(a.date)));
+      const posts = (blog.items || []).slice().filter((p) => (p.status || 'published') !== 'draft').sort((a, b) => String(b.date).localeCompare(String(a.date)));
       document.querySelectorAll('[data-cms="blog.title"]').forEach((el) => {
         el.textContent = blog.title || 'Our Blog';
       });

@@ -3,25 +3,10 @@ require __DIR__ . '/auth.php';
 manage_require_login();
 $navCurrent = 'blog';
 $blog = manage_read_json('blog.json');
-$published = [];
-foreach (($blog['items'] ?? []) as $item) {
-    if (trim((string) ($item['title'] ?? '')) !== '') {
-        $published[] = $item;
-    }
-}
-$items = $published;
-// One empty slot for adding a new post
-$items[] = [
-    'slug' => '',
-    'title' => '',
-    'excerpt' => '',
-    'date' => date('Y-m-d'),
-    'author' => 'Reasonable Compliance',
-    'image' => '',
-    'seoTitle' => '',
-    'seoDescription' => '',
-    'body' => '',
-];
+$items = $blog['items'] ?? [];
+usort($items, fn($a, $b) => strcmp((string) ($b['date'] ?? ''), (string) ($a['date'] ?? '')));
+$saved = ($_GET['saved'] ?? '') === '1';
+$deleted = ($_GET['deleted'] ?? '') === '1';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -31,182 +16,95 @@ $items[] = [
   <meta name="robots" content="noindex" />
   <title>Blog | Admin</title>
   <link rel="stylesheet" href="/rc-panel/rc-panel.css" />
-  <script src="https://cdn.jsdelivr.net/npm/tinymce@7.6.0/tinymce.min.js" referrerpolicy="origin"></script>
 </head>
 <body>
   <div class="layout">
     <?php require __DIR__ . '/partials/nav.php'; ?>
     <main class="main blog-admin">
-      <h1>Blog</h1>
-      <p class="help">
-        Edit published posts below, or fill the last empty card to add a new one.
-        Use the editor toolbar for <strong>Bold</strong>, <em>Italic</em>, headings, lists, links and images.
-        Leave a post title blank to delete it on save.
-      </p>
-
-      <?php if (count($published) === 0): ?>
-        <p class="error">No published posts found in <code>data/blog.json</code> yet. Add a new post below, or deploy the latest site files so starter posts appear here.</p>
-      <?php else: ?>
-        <div class="card">
-          <h2>Published posts (<?= count($published) ?>)</h2>
-          <ul class="post-index">
-            <?php foreach ($published as $i => $item): ?>
-              <li>
-                <a href="#post-<?= $i ?>"><?= manage_h($item['title']) ?></a>
-                <span class="small"><?= manage_h($item['date'] ?? '') ?> · /blog/<?= manage_h($item['slug'] ?? '') ?></span>
-              </li>
-            <?php endforeach; ?>
-          </ul>
+      <div class="page-head">
+        <div>
+          <h1>Blog</h1>
+          <p class="help" style="margin:0">Manage posts like a normal CMS — edit one at a time, upload covers, format with Bold/Italic.</p>
         </div>
-      <?php endif; ?>
+        <a class="btn" href="/rc-panel/edit-blog-post.php">+ New post</a>
+      </div>
 
-      <form method="post" action="/rc-panel/save.php" id="blog-form">
-        <input type="hidden" name="type" value="blog" />
-        <input type="hidden" name="count" value="<?= count($items) ?>" />
+      <?php if ($saved): ?><p class="success">Saved successfully.</p><?php endif; ?>
+      <?php if ($deleted): ?><p class="success">Post deleted.</p><?php endif; ?>
 
-        <div class="card">
-          <h2>Blog page settings</h2>
+      <div class="card">
+        <h2>Blog page settings</h2>
+        <form method="post" action="/rc-panel/save.php">
+          <input type="hidden" name="type" value="blog_settings" />
           <label>Section title <input name="title" type="text" value="<?= manage_h($blog['title'] ?? 'Our Blog') ?>" /></label>
           <label>Intro <textarea name="intro"><?= manage_h($blog['intro'] ?? '') ?></textarea></label>
+          <button type="submit">Save settings</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <div class="page-head" style="margin-bottom:14px">
+          <h2 style="margin:0">All posts (<?= count($items) ?>)</h2>
+          <a class="btn secondary" href="/blog" target="_blank" rel="noopener">View blog ↗</a>
         </div>
 
-        <?php foreach ($items as $i => $item):
-          $isNew = trim((string) ($item['title'] ?? '')) === '';
-          $heading = $isNew ? 'Add new post' : ('Edit: ' . ($item['title'] ?? ('Post ' . ($i + 1))));
-        ?>
-          <div class="card post-card" id="post-<?= $i ?>">
-            <div class="post-card-head">
-              <h2><?= manage_h($heading) ?></h2>
-              <?php if (!$isNew): ?>
-                <span class="badge">Published</span>
-              <?php else: ?>
-                <span class="badge badge-new">New</span>
-              <?php endif; ?>
-            </div>
-
-            <div class="grid-2">
-              <label>Title <input name="title_<?= $i ?>" type="text" value="<?= manage_h($item['title'] ?? '') ?>" placeholder="Post title" /></label>
-              <label>Slug (URL) <input name="slug_<?= $i ?>" type="text" value="<?= manage_h($item['slug'] ?? '') ?>" placeholder="my-post-url" /></label>
-            </div>
-            <div class="grid-2">
-              <label>Date (YYYY-MM-DD) <input name="date_<?= $i ?>" type="text" value="<?= manage_h($item['date'] ?? '') ?>" /></label>
-              <label>Author <input name="author_<?= $i ?>" type="text" value="<?= manage_h($item['author'] ?? '') ?>" /></label>
-            </div>
-
-            <div class="image-field">
-              <label>Cover image
-                <input class="image-url-input" name="image_<?= $i ?>" id="image_<?= $i ?>" type="text" value="<?= manage_h($item['image'] ?? '') ?>" placeholder="/uploads/blog/photo.jpg" />
-              </label>
-              <div class="image-actions">
-                <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" class="cover-file" data-target="image_<?= $i ?>" data-preview="preview_<?= $i ?>" />
-                <button type="button" class="secondary cover-upload-btn" data-file="image_<?= $i ?>">Upload image</button>
-              </div>
-              <div class="image-preview-wrap">
-                <?php if (!empty($item['image'])): ?>
-                  <img id="preview_<?= $i ?>" class="image-preview" src="<?= manage_h($item['image']) ?>" alt="" />
-                <?php else: ?>
-                  <img id="preview_<?= $i ?>" class="image-preview" src="" alt="" hidden />
-                <?php endif; ?>
-              </div>
-              <p class="small">Upload a JPG/PNG/WEBP (max 4MB), or paste an image path/URL.</p>
-            </div>
-
-            <label>Short excerpt <textarea name="excerpt_<?= $i ?>"><?= manage_h($item['excerpt'] ?? '') ?></textarea></label>
-
-            <label>Article content
-              <textarea class="rich-editor" name="body_<?= $i ?>" id="body_<?= $i ?>" rows="12"><?= manage_h($item['body'] ?? '') ?></textarea>
-            </label>
-
-            <label>SEO title <input name="seoTitle_<?= $i ?>" type="text" value="<?= manage_h($item['seoTitle'] ?? '') ?>" /></label>
-            <label>SEO description <textarea name="seoDescription_<?= $i ?>"><?= manage_h($item['seoDescription'] ?? '') ?></textarea></label>
+        <?php if (count($items) === 0): ?>
+          <p class="muted">No posts yet. Click <strong>New post</strong> to create your first article.</p>
+        <?php else: ?>
+          <div class="table-wrap">
+            <table class="posts-table">
+              <thead>
+                <tr>
+                  <th>Cover</th>
+                  <th>Post</th>
+                  <th>Status</th>
+                  <th>Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <?php foreach ($items as $item):
+                  $slug = (string) ($item['slug'] ?? '');
+                  $status = ($item['status'] ?? 'published') === 'draft' ? 'draft' : 'published';
+                  $image = trim((string) ($item['image'] ?? ''));
+                ?>
+                  <tr>
+                    <td>
+                      <div class="thumb">
+                        <?php if ($image !== ''): ?>
+                          <img src="<?= manage_h($image) ?>" alt="" />
+                        <?php else: ?>
+                          <span>No image</span>
+                        <?php endif; ?>
+                      </div>
+                    </td>
+                    <td>
+                      <strong><?= manage_h($item['title'] ?? 'Untitled') ?></strong>
+                      <div class="small">/blog/<?= manage_h($slug) ?></div>
+                    </td>
+                    <td>
+                      <span class="badge <?= $status === 'draft' ? 'badge-new' : '' ?>">
+                        <?= $status === 'draft' ? 'Draft' : 'Published' ?>
+                      </span>
+                    </td>
+                    <td class="small"><?= manage_h($item['date'] ?? '') ?></td>
+                    <td class="actions">
+                      <a class="btn-link" href="/rc-panel/edit-blog-post.php?slug=<?= urlencode($slug) ?>">Edit</a>
+                      <a class="btn-link" href="/blog/read?slug=<?= urlencode($slug) ?>" target="_blank" rel="noopener">View</a>
+                      <form class="inline-form" method="post" action="/rc-panel/save.php" onsubmit="return confirm('Delete this post permanently?');">
+                        <input type="hidden" name="type" value="blog_delete" />
+                        <input type="hidden" name="slug" value="<?= manage_h($slug) ?>" />
+                        <button type="submit" class="btn-link danger">Delete</button>
+                      </form>
+                    </td>
+                  </tr>
+                <?php endforeach; ?>
+              </tbody>
+            </table>
           </div>
-        <?php endforeach; ?>
-
-        <button type="submit">Save blog</button>
-      </form>
+        <?php endif; ?>
+      </div>
     </main>
   </div>
-
-  <script>
-    function uploadImage(file) {
-      var data = new FormData();
-      data.append('file', file);
-      return fetch('/rc-panel/upload.php', {
-        method: 'POST',
-        body: data,
-        credentials: 'same-origin',
-      }).then(function (res) {
-        return res.json().then(function (json) {
-          if (!res.ok) throw new Error(json.error || 'Upload failed');
-          return json.location || json.url;
-        });
-      });
-    }
-
-    tinymce.init({
-      selector: 'textarea.rich-editor',
-      base_url: 'https://cdn.jsdelivr.net/npm/tinymce@7.6.0',
-      suffix: '.min',
-      height: 420,
-      menubar: false,
-      plugins: 'lists link image table code autoresize',
-      toolbar:
-        'undo redo | styles | bold italic underline | alignleft aligncenter alignright | bullist numlist | link image table | removeformat | code',
-      branding: false,
-      convert_urls: false,
-      content_style:
-        'body { font-family: Segoe UI, system-ui, sans-serif; font-size: 15px; line-height: 1.6; color: #1e293b; }',
-      images_upload_handler: function (blobInfo) {
-        return uploadImage(blobInfo.blob());
-      },
-    });
-
-    document.getElementById('blog-form').addEventListener('submit', function () {
-      if (window.tinymce) tinymce.triggerSave();
-    });
-
-    document.querySelectorAll('.cover-upload-btn').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        var inputId = btn.getAttribute('data-file');
-        var fileInput = document.querySelector('.cover-file[data-target="' + inputId + '"]');
-        if (fileInput) fileInput.click();
-      });
-    });
-
-    document.querySelectorAll('.cover-file').forEach(function (fileInput) {
-      fileInput.addEventListener('change', function () {
-        var file = fileInput.files && fileInput.files[0];
-        if (!file) return;
-        var targetId = fileInput.getAttribute('data-target');
-        var previewId = fileInput.getAttribute('data-preview');
-        var urlInput = document.getElementById(targetId);
-        var preview = document.getElementById(previewId);
-        uploadImage(file)
-          .then(function (url) {
-            if (urlInput) urlInput.value = url;
-            if (preview) {
-              preview.src = url;
-              preview.hidden = false;
-            }
-          })
-          .catch(function (err) {
-            alert(err.message || 'Upload failed');
-          });
-      });
-    });
-
-    document.querySelectorAll('.image-url-input').forEach(function (input) {
-      input.addEventListener('change', function () {
-        var preview = input.closest('.image-field').querySelector('.image-preview');
-        if (!preview) return;
-        if (input.value) {
-          preview.src = input.value;
-          preview.hidden = false;
-        } else {
-          preview.hidden = true;
-        }
-      });
-    });
-  </script>
 </body>
 </html>

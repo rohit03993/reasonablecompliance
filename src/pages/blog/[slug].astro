@@ -3,10 +3,12 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import blog from '../../../public/data/blog.json';
 
 export function getStaticPaths() {
-  return blog.items.map((post) => ({
-    params: { slug: post.slug },
-    props: { post },
-  }));
+  return blog.items
+    .filter((post) => (post.status || 'published') !== 'draft')
+    .map((post) => ({
+      params: { slug: post.slug },
+      props: { post },
+    }));
 }
 
 const { post } = Astro.props;

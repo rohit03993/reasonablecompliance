@@ -144,7 +144,9 @@
         setText('blog.title', blog.title);
         setText('blog.intro', blog.intro);
         if (Array.isArray(blog.items)) {
-          var posts = blog.items.slice().sort(function (a, b) {
+          var posts = blog.items.slice().filter(function (p) {
+            return (p.status || 'published') !== 'draft';
+          }).sort(function (a, b) {
             return String(b.date || '').localeCompare(String(a.date || ''));
           }).slice(0, 3);
           document.querySelectorAll('[data-cms-blog-teasers]').forEach(function (wrap) {

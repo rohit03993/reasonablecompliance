@@ -2,6 +2,7 @@
 import blog from '../../public/data/blog.json';
 
 const posts = [...blog.items]
+  .filter((p) => (p.status || 'published') !== 'draft')
   .sort((a, b) => String(b.date).localeCompare(String(a.date)))
   .slice(0, 3);
 

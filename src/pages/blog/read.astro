@@ -103,7 +103,7 @@ import site from '../../../public/data/site.json';
 
     try {
       const blog = await fetch('/data/blog.json', { cache: 'no-store' }).then((r) => r.json());
-      const post = (blog.items || []).find((item) => item.slug === slug);
+      const post = (blog.items || []).find((item) => item.slug === slug && (item.status || 'published') !== 'draft');
       if (!post) {
         if (titleEl) titleEl.textContent = 'Article not found';
         if (missingEl) missingEl.classList.remove('hidden');
