@@ -28,11 +28,19 @@ $navCurrent = '';
           <li><a href="/rc-panel/edit-site.php">Brand & Contact</a></li>
           <li><a href="/rc-panel/edit-social.php">Social Links</a> — Facebook, Instagram, LinkedIn, Twitter</li>
           <li><a href="/rc-panel/edit-homepage.php">Homepage</a></li>
+          <li><a href="/rc-panel/edit-about.php">About</a></li>
+          <li><a href="/rc-panel/edit-contact.php">Contact page</a></li>
+          <li><a href="/rc-panel/edit-services.php">Services</a></li>
+          <li><a href="/rc-panel/edit-blog.php">Blog</a> — posts &amp; articles</li>
           <li><a href="/rc-panel/edit-gallery.php">Gallery</a> — photos only</li>
           <li><a href="/rc-panel/edit-testimonials.php">Testimonials</a></li>
-          <li><a href="/rc-panel/edit-services.php">Services</a></li>
           <li><a href="/rc-panel/edit-faqs.php">FAQs</a></li>
         </ul>
+        <p class="help" style="margin-top:1rem">
+          Almost all text you see on the website is editable here. Layout, colours and animations are fixed in the design.
+          After saving, hard-refresh the public page (Ctrl+Shift+R). New blog posts show on the Blog list immediately;
+          clean URLs like <code>/blog/my-post/</code> appear after the next site deploy.
+        </p>
       </div>
       <p class="small">Login URL: <strong>/rc-panel/</strong> &nbsp;|&nbsp; Username: <strong>admin</strong></p>
     </main>

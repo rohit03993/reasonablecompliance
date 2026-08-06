@@ -30,9 +30,8 @@ const networks = [
           )
         }
         <p class="mt-2 text-sm text-white/70" data-cms="site.tagline">{site.tagline}</p>
-        <p class="mt-4 max-w-sm text-sm leading-relaxed text-white/65">
-          Professional corporate compliance, company secretary services, ROC filing,
-          company registration, GST and legal advisory for businesses across India.
+        <p class="mt-4 max-w-sm text-sm leading-relaxed text-white/65" data-cms="site.footerBlurb">
+          {site.footerBlurb || 'Professional corporate compliance, company secretary services, ROC filing, company registration, GST and legal advisory for businesses across India.'}
         </p>
         {
           networks.length > 0 && (
@@ -60,6 +59,7 @@ const networks = [
         <ul class="mt-4 space-y-2 text-sm text-white/75">
           <li><a class="hover:text-white" href="/about">About</a></li>
           <li><a class="hover:text-white" href="/services">Services</a></li>
+          <li><a class="hover:text-white" href="/blog">Blog</a></li>
           <li><a class="hover:text-white" href="/gallery">Gallery</a></li>
           <li><a class="hover:text-white" href="/contact">Contact</a></li>
           <li><a class="hover:text-white" href="/privacy">Privacy</a></li>

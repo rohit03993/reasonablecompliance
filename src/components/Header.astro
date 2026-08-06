@@ -6,6 +6,7 @@ const pathname = Astro.url.pathname;
 const services = [...servicesData.items].sort((a, b) => a.order - b.order);
 const servicesActive = pathname.startsWith('/services');
 const galleryActive = pathname.startsWith('/gallery');
+const blogActive = pathname.startsWith('/blog');
 
 function isActive(href: string) {
   if (href === '/') return pathname === '/';
@@ -105,6 +106,16 @@ function isActive(href: string) {
       </div>
 
       <a
+        href="/blog"
+        class:list={[
+          'rounded-md px-3 py-2 text-sm font-medium transition',
+          blogActive ? 'text-emerald' : 'text-navy/70 hover:text-navy',
+        ]}
+        aria-current={blogActive ? 'page' : undefined}
+      >
+        Blog
+      </a>
+      <a
         href="/gallery"
         class:list={[
           'rounded-md px-3 py-2 text-sm font-medium transition',
@@ -167,6 +178,7 @@ function isActive(href: string) {
         </div>
       </details>
 
+      <a href="/blog" class:list={['rounded-md px-3 py-3 text-base font-medium', blogActive ? 'bg-surface-alt text-emerald' : 'text-navy']}>Blog</a>
       <a href="/gallery" class:list={['rounded-md px-3 py-3 text-base font-medium', galleryActive ? 'bg-surface-alt text-emerald' : 'text-navy']}>Gallery</a>
       <a href="/contact" class:list={['rounded-md px-3 py-3 text-base font-medium', isActive('/contact') ? 'bg-surface-alt text-emerald' : 'text-navy']}>Contact</a>
       <a href="/contact" class="btn-primary mt-2 w-full" data-cms="site.ctaPrimary">{site.ctaPrimary}</a>

@@ -1,0 +1,55 @@
+---
+import blog from '../../public/data/blog.json';
+
+const posts = [...blog.items]
+  .sort((a, b) => String(b.date).localeCompare(String(a.date)))
+  .slice(0, 3);
+
+function formatDate(dateStr: string) {
+  try {
+    return new Date(dateStr + 'T00:00:00').toLocaleDateString('en-IN', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    });
+  } catch {
+    return dateStr;
+  }
+}
+---
+
+<section class="section-pad bg-surface" id="blog">
+  <div class="container-rc">
+    <div class="reveal flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <div class="max-w-2xl">
+        <p class="text-sm font-semibold uppercase tracking-wider text-emerald">Blog</p>
+        <h2 class="mt-2 text-3xl font-bold sm:text-4xl" data-cms="blog.title">{blog.title}</h2>
+        <p class="mt-3 text-muted" data-cms="blog.intro">{blog.intro}</p>
+      </div>
+      <a href="/blog" class="btn-outline shrink-0 self-start sm:self-auto">View all posts</a>
+    </div>
+
+    <ul class="mt-12 grid gap-6 md:grid-cols-3" data-cms-blog-teasers>
+      {
+        posts.map((post, index) => (
+          <li
+            class="reveal group flex flex-col rounded-2xl border border-navy/10 bg-white p-6 transition duration-300 hover:-translate-y-1 hover:border-emerald/30 hover:shadow-[0_16px_40px_rgba(10,37,64,0.08)]"
+            style={`transition-delay: ${index * 70}ms`}
+          >
+            <p class="text-xs font-semibold uppercase tracking-wider text-emerald">{formatDate(post.date)}</p>
+            <h3 class="mt-3 text-lg font-semibold text-navy transition group-hover:text-emerald">
+              <a href={`/blog/${post.slug}`}>{post.title}</a>
+            </h3>
+            <p class="mt-3 flex-1 text-sm leading-relaxed text-muted">{post.excerpt}</p>
+            <a
+              href={`/blog/${post.slug}`}
+              class="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-emerald transition group-hover:gap-2"
+            >
+              Read more <span aria-hidden="true">→</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>

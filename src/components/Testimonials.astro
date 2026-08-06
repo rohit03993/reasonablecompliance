@@ -7,9 +7,9 @@ import Icon from './Icon.astro';
   <div class="container-rc">
     <div class="reveal mx-auto max-w-2xl text-center">
       <p class="text-sm font-semibold uppercase tracking-wider text-emerald">Testimonials</p>
-      <h2 class="mt-2 text-3xl font-bold sm:text-4xl">{testimonials.title}</h2>
+      <h2 class="mt-2 text-3xl font-bold sm:text-4xl" data-cms="testimonials.title">{testimonials.title}</h2>
     </div>
-    <ul class="mt-12 grid gap-6 md:grid-cols-3">
+    <ul class="mt-12 grid gap-6 md:grid-cols-3" data-cms-testimonials>
       {
         testimonials.items.map((item, index) => (
           <li

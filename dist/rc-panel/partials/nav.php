@@ -8,6 +8,7 @@ $items = [
     'about' => ['About', '/rc-panel/edit-about.php'],
     'contact' => ['Contact page', '/rc-panel/edit-contact.php'],
     'services' => ['Services', '/rc-panel/edit-services.php'],
+    'blog' => ['Blog', '/rc-panel/edit-blog.php'],
     'gallery' => ['Gallery', '/rc-panel/edit-gallery.php'],
     'testimonials' => ['Testimonials', '/rc-panel/edit-testimonials.php'],
     'faqs' => ['FAQs', '/rc-panel/edit-faqs.php'],

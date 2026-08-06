@@ -33,6 +33,7 @@ $navCurrent = 'site';
           <label>Primary button <input name="ctaPrimary" type="text" value="<?= manage_h($site['ctaPrimary'] ?? '') ?>" /></label>
           <label>Secondary button <input name="ctaSecondary" type="text" value="<?= manage_h($site['ctaSecondary'] ?? '') ?>" /></label>
         </div>
+        <label>Footer short description <textarea name="footerBlurb"><?= manage_h($site['footerBlurb'] ?? '') ?></textarea></label>
         <label>SEO title <input name="seoDefaultTitle" type="text" value="<?= manage_h($site['seoDefaultTitle'] ?? '') ?>" /></label>
         <label>SEO description <textarea name="seoDefaultDescription"><?= manage_h($site['seoDefaultDescription'] ?? '') ?></textarea></label>
         <button type="submit">Save changes</button>

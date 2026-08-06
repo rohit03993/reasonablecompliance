@@ -35,6 +35,7 @@ switch ($type) {
             'web3formsAccessKey' => $current['web3formsAccessKey'] ?? '',
             'ctaPrimary' => trim((string) ($_POST['ctaPrimary'] ?? '')),
             'ctaSecondary' => trim((string) ($_POST['ctaSecondary'] ?? '')),
+            'footerBlurb' => trim((string) ($_POST['footerBlurb'] ?? '')),
             'seoDefaultTitle' => trim((string) ($_POST['seoDefaultTitle'] ?? '')),
             'seoDefaultDescription' => trim((string) ($_POST['seoDefaultDescription'] ?? '')),
         ];
@@ -218,6 +219,38 @@ switch ($type) {
         manage_write_json('testimonials.json', [
             'title' => trim((string) ($_POST['title'] ?? 'What our clients say')),
             'items' => $tItems,
+        ]);
+        break;
+
+    case 'blog':
+        $bItems = [];
+        $count = (int) ($_POST['count'] ?? 0);
+        for ($i = 0; $i < $count; $i++) {
+            $title = trim((string) ($_POST["title_$i"] ?? ''));
+            if ($title === '') {
+                continue;
+            }
+            $slug = trim((string) ($_POST["slug_$i"] ?? ''));
+            if ($slug === '') {
+                $slug = strtolower(preg_replace('/[^a-z0-9]+/i', '-', $title) ?? '');
+                $slug = trim($slug, '-');
+            }
+            $bItems[] = [
+                'slug' => $slug,
+                'title' => $title,
+                'excerpt' => trim((string) ($_POST["excerpt_$i"] ?? '')),
+                'date' => trim((string) ($_POST["date_$i"] ?? date('Y-m-d'))),
+                'author' => trim((string) ($_POST["author_$i"] ?? 'Reasonable Compliance')),
+                'seoTitle' => trim((string) ($_POST["seoTitle_$i"] ?? '')),
+                'seoDescription' => trim((string) ($_POST["seoDescription_$i"] ?? '')),
+                'body' => trim((string) ($_POST["body_$i"] ?? '')),
+            ];
+        }
+        usort($bItems, fn($a, $b) => strcmp($b['date'], $a['date']));
+        manage_write_json('blog.json', [
+            'title' => trim((string) ($_POST['title'] ?? 'Our Blog')),
+            'intro' => trim((string) ($_POST['intro'] ?? '')),
+            'items' => $bItems,
         ]);
         break;
 
