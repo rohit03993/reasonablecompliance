@@ -16,6 +16,7 @@ $current = is_file($versionFile) ? manage_read_json('cache-version.json') : [];
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="robots" content="noindex" />
   <title>Flush cache | Admin</title>
+  <?php require __DIR__ . '/partials/favicon.php'; ?>
   <link rel="stylesheet" href="/rc-panel/rc-panel.css" />
 </head>
 <body>

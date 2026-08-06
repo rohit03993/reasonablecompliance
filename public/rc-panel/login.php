@@ -28,6 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="robots" content="noindex" />
   <title>Login | Content Admin</title>
+  <?php require __DIR__ . '/partials/favicon.php'; ?>
   <link rel="stylesheet" href="/rc-panel/rc-panel.css" />
 </head>
 <body class="login-page">

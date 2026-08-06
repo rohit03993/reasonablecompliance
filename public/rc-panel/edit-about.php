@@ -11,6 +11,7 @@ $about = manage_read_json('about.json');
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="robots" content="noindex" />
   <title>About | Admin</title>
+  <?php require __DIR__ . '/partials/favicon.php'; ?>
   <link rel="stylesheet" href="/rc-panel/rc-panel.css" />
 </head>
 <body>
