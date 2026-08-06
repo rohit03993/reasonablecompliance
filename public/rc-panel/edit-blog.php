@@ -3,15 +3,15 @@ require __DIR__ . '/auth.php';
 manage_require_login();
 $navCurrent = 'blog';
 
-// Force-heal corrupt blog data before rendering
+// Load posts BEFORE including nav (nav must never overwrite this)
 $blog = manage_ensure_content('blog', 'blog.json');
-$items = manage_blog_valid_items($blog['items'] ?? []);
-if (count($items) === 0) {
+$posts = manage_blog_valid_items($blog['items'] ?? []);
+if (count($posts) === 0) {
     manage_restore_seed('blog', 'blog.json');
     $blog = manage_read_json('blog.json');
-    $items = manage_blog_valid_items($blog['items'] ?? []);
+    $posts = manage_blog_valid_items($blog['items'] ?? []);
 }
-usort($items, fn($a, $b) => strcmp((string) ($b['date'] ?? ''), (string) ($a['date'] ?? '')));
+usort($posts, fn($a, $b) => strcmp((string) ($b['date'] ?? ''), (string) ($a['date'] ?? '')));
 
 $saved = ($_GET['saved'] ?? '') === '1';
 $deleted = ($_GET['deleted'] ?? '') === '1';
@@ -20,6 +20,13 @@ $error = (string) ($_GET['error'] ?? '');
 $dataPath = manage_data_dir() . DIRECTORY_SEPARATOR . 'blog.json';
 $seedPath = manage_seed_file('blog');
 $rawCount = is_array($blog['items'] ?? null) ? count($blog['items']) : 0;
+$postTitles = [];
+foreach ($posts as $p) {
+    $t = trim((string) ($p['title'] ?? ''));
+    if ($t !== '') {
+        $postTitles[] = $t;
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -37,7 +44,7 @@ $rawCount = is_array($blog['items'] ?? null) ? count($blog['items']) : 0;
       <div class="page-head">
         <div>
           <h1>Blog</h1>
-          <p class="help" style="margin:0">Live website posts. Empty/corrupt rows are auto-removed.</p>
+          <p class="help" style="margin:0">Same posts as the live website. Edit one at a time.</p>
         </div>
         <div class="actions">
           <a class="btn secondary" href="/rc-panel/flush-cache.php">Flush cache</a>
@@ -47,8 +54,8 @@ $rawCount = is_array($blog['items'] ?? null) ? count($blog['items']) : 0;
 
       <?php if ($saved): ?><p class="success">Saved.</p><?php endif; ?>
       <?php if ($deleted): ?><p class="success">Post deleted.</p><?php endif; ?>
-      <?php if ($repaired): ?><p class="success">Blog restored from packaged JSON seed (<?= count($items) ?> posts).</p><?php endif; ?>
-      <?php if ($error === 'restore'): ?><p class="error">Restore failed — seed file missing or data folder not writable.</p><?php endif; ?>
+      <?php if ($repaired): ?><p class="success">Blog restored (<?= count($posts) ?> posts).</p><?php endif; ?>
+      <?php if ($error === 'restore'): ?><p class="error">Restore failed — seed missing or data folder not writable.</p><?php endif; ?>
 
       <div class="card">
         <h2>Blog page settings</h2>
@@ -62,7 +69,7 @@ $rawCount = is_array($blog['items'] ?? null) ? count($blog['items']) : 0;
 
       <div class="card">
         <div class="page-head" style="margin-bottom:14px">
-          <h2 style="margin:0">All posts (<?= count($items) ?>)</h2>
+          <h2 style="margin:0">All posts (<?= count($posts) ?>)</h2>
           <div class="actions">
             <a class="btn secondary" href="/blog" target="_blank" rel="noopener">View blog ↗</a>
             <form class="inline-form" method="post" action="/rc-panel/save.php">
@@ -75,11 +82,12 @@ $rawCount = is_array($blog['items'] ?? null) ? count($blog['items']) : 0;
         <p class="small" style="margin-top:0">
           Data: <code><?= manage_h($dataPath) ?></code><br />
           Seed: <code><?= manage_h($seedPath) ?></code> <?= is_file($seedPath) ? '(found)' : '(MISSING)' ?><br />
-          Raw rows in file: <?= (int) $rawCount ?> · Valid posts shown: <?= count($items) ?>
+          Rows in JSON: <?= (int) $rawCount ?> · Showing: <?= count($posts) ?><br />
+          Titles: <?= manage_h(count($postTitles) ? implode(' · ', $postTitles) : '(none)') ?>
         </p>
 
-        <?php if (count($items) === 0): ?>
-          <p class="error">No valid posts. Click <strong>Repair / re-sync</strong>. If that fails, redeploy <code>rc-panel/seed/blog.json</code>.</p>
+        <?php if (count($posts) === 0): ?>
+          <p class="error">No valid posts. Click <strong>Repair / re-sync</strong>.</p>
         <?php else: ?>
           <div class="table-wrap">
             <table class="posts-table">
@@ -93,11 +101,11 @@ $rawCount = is_array($blog['items'] ?? null) ? count($blog['items']) : 0;
                 </tr>
               </thead>
               <tbody>
-                <?php foreach ($items as $item):
-                  $slug = (string) ($item['slug'] ?? '');
-                  $title = trim((string) ($item['title'] ?? ''));
-                  $status = ($item['status'] ?? 'published') === 'draft' ? 'draft' : 'published';
-                  $image = trim((string) ($item['image'] ?? ''));
+                <?php foreach ($posts as $post):
+                  $slug = (string) ($post['slug'] ?? '');
+                  $title = trim((string) ($post['title'] ?? ''));
+                  $status = ($post['status'] ?? 'published') === 'draft' ? 'draft' : 'published';
+                  $image = trim((string) ($post['image'] ?? ''));
                 ?>
                   <tr>
                     <td>
@@ -114,7 +122,7 @@ $rawCount = is_array($blog['items'] ?? null) ? count($blog['items']) : 0;
                       <div class="small">/blog/<?= manage_h($slug) ?></div>
                     </td>
                     <td><span class="badge <?= $status === 'draft' ? 'badge-new' : '' ?>"><?= $status === 'draft' ? 'Draft' : 'Published' ?></span></td>
-                    <td class="small"><?= manage_h($item['date'] ?? '') ?></td>
+                    <td class="small"><?= manage_h($post['date'] ?? '') ?></td>
                     <td class="actions">
                       <a class="btn-link" href="/rc-panel/edit-blog-post.php?slug=<?= urlencode($slug) ?>">Edit</a>
                       <a class="btn-link" href="/blog/read?slug=<?= urlencode($slug) ?>" target="_blank" rel="noopener">View</a>

@@ -1,6 +1,6 @@
 <?php
 $navCurrent = $navCurrent ?? '';
-$items = [
+$navItems = [
     '' => ['Dashboard', '/rc-panel/'],
     'site' => ['Brand & Contact', '/rc-panel/edit-site.php'],
     'social' => ['Social Links', '/rc-panel/edit-social.php'],
@@ -18,7 +18,7 @@ $items = [
 <aside class="sidebar">
   <h2>Content Admin</h2>
   <nav>
-    <?php foreach ($items as $key => [$label, $href]): ?>
+    <?php foreach ($navItems as $key => [$label, $href]): ?>
       <a class="<?= $navCurrent === $key ? 'active' : '' ?>" href="<?= manage_h($href) ?>"><?= manage_h($label) ?></a>
     <?php endforeach; ?>
   </nav>

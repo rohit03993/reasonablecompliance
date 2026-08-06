@@ -274,6 +274,11 @@ function manage_bump_cache(): string
     return $version;
 }
 
+function manage_cache_version_path(): string
+{
+    return manage_data_dir() . DIRECTORY_SEPARATOR . 'cache-version.json';
+}
+
 function manage_flush_cache(): array
 {
     $notes = [];
