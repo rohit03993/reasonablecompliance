@@ -5,8 +5,9 @@ import ServicesOverview from '../components/ServicesOverview.astro';
 import TrustSection from '../components/TrustSection.astro';
 import Industries from '../components/Industries.astro';
 import Process from '../components/Process.astro';
-import FAQ from '../components/FAQ.astro';
+import StatsStrip from '../components/StatsStrip.astro';
 import Testimonials from '../components/Testimonials.astro';
+import FAQ from '../components/FAQ.astro';
 import FinalCTA from '../components/FinalCTA.astro';
 import site from '../../public/data/site.json';
 ---
@@ -16,6 +17,7 @@ import site from '../../public/data/site.json';
   description={site.seoDefaultDescription}
 >
   <Hero />
+  <StatsStrip />
   <ServicesOverview />
   <TrustSection />
   <Industries />

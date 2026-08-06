@@ -3,10 +3,11 @@
     {
       "slug": "company-incorporation",
       "title": "Company Incorporation",
-      "summary": "Start your business with confidence. Complete company registration support across India.",
+      "summary": "Start your entrepreneurial journey with confidence. We simplify company registration in India and help you choose the right structure for long-term growth.",
       "seoTitle": "Company Registration India | Private Limited, LLP, OPC — Reasonable Compliance",
       "seoDescription": "Company incorporation and business registration in India — Private Limited, LLP, OPC, Partnership and Section 8 company registration with structuring advisory.",
       "order": 1,
+      "icon": "building",
       "bullets": [
         "Private Limited Company Registration",
         "LLP Registration",
@@ -19,10 +20,11 @@
     {
       "slug": "roc-secretarial-compliance",
       "title": "ROC & Secretarial Compliance",
-      "summary": "Stay compliant with the Companies Act through timely ROC filings and secretarial support.",
+      "summary": "Stay compliant with the Companies Act through timely ROC filings, board documentation and complete secretarial support.",
       "seoTitle": "ROC Filing Services & Secretarial Compliance | Reasonable Compliance",
       "seoDescription": "Annual and event-based ROC filing services, board meeting documentation, AGM compliance, share capital and director compliance across India.",
       "order": 2,
+      "icon": "file",
       "bullets": [
         "Annual ROC Filings",
         "Event-Based ROC Filings",
@@ -36,10 +38,11 @@
     {
       "slug": "gst-business-registrations",
       "title": "GST & Business Registrations",
-      "summary": "Complete registration support for GST, MSME, FSSAI and other statutory registrations.",
+      "summary": "Complete registration support for GST, MSME, FSSAI and other statutory licences so your business can operate smoothly from day one.",
       "seoTitle": "GST Registration & Business Registration India | Reasonable Compliance",
       "seoDescription": "GST registration and amendment, MSME registration, FSSAI, PAN & TAN, professional tax, and shops & establishment registration support.",
       "order": 3,
+      "icon": "receipt",
       "bullets": [
         "GST Registration",
         "GST Amendment",
@@ -53,10 +56,11 @@
     {
       "slug": "legal-regulatory-advisory",
       "title": "Legal & Regulatory Advisory",
-      "summary": "Professional corporate law advisory and compliance management tailored to your business.",
+      "summary": "Practical corporate law advisory, documentation and governance support tailored to your business stage and industry.",
       "seoTitle": "Corporate Law Advisory & Legal Compliance Services | Reasonable Compliance",
       "seoDescription": "Corporate law advisory, legal opinions, due diligence, compliance management, business documentation and corporate governance advisory.",
       "order": 4,
+      "icon": "scale",
       "bullets": [
         "Corporate Law Advisory",
         "Legal Opinions",
@@ -69,10 +73,11 @@
     {
       "slug": "fema-foreign-investment",
       "title": "FEMA & Foreign Investment Compliance",
-      "summary": "Helping businesses comply with international investment regulations and RBI reporting.",
+      "summary": "Navigate FDI, ODI and RBI reporting requirements with clear FEMA advisory and documentation support for cross-border investments.",
       "seoTitle": "FEMA Compliance, FDI & ODI Advisory | Reasonable Compliance",
       "seoDescription": "FEMA compliance, FDI and ODI advisory, RBI reporting and foreign investment documentation for businesses in India.",
       "order": 5,
+      "icon": "globe",
       "bullets": [
         "FDI Compliance",
         "ODI Compliance",
@@ -84,10 +89,11 @@
     {
       "slug": "intellectual-property",
       "title": "Intellectual Property Services",
-      "summary": "Protect your business identity with trademark registration and brand protection advisory.",
+      "summary": "Protect your brand identity with trademark registration, objection handling, renewals and practical brand protection advisory.",
       "seoTitle": "Trademark Registration & Brand Protection | Reasonable Compliance",
       "seoDescription": "Trademark registration, objection reply, renewal and brand protection advisory for startups and growing businesses in India.",
       "order": 6,
+      "icon": "shield",
       "bullets": [
         "Trademark Registration",
         "Trademark Objection Reply",

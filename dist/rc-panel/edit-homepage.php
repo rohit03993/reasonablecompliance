@@ -30,6 +30,17 @@ $steps = $h['processSteps'] ?? [];
           <label>Intro <textarea name="intro"><?= manage_h($hero['intro'] ?? '') ?></textarea></label>
         </div>
         <div class="card">
+          <h2>Stats strip</h2>
+          <p class="help">Four highlight stats shown under the hero. Format each line as: Value | Label</p>
+          <label>Stats (one per line) <textarea name="stats"><?php
+            $statLines = [];
+            foreach (($h['stats'] ?? []) as $stat) {
+              $statLines[] = trim(($stat['value'] ?? '') . ' | ' . ($stat['label'] ?? ''));
+            }
+            echo manage_h(implode("\n", $statLines));
+          ?></textarea></label>
+        </div>
+        <div class="card">
           <h2>Trust & Why us</h2>
           <label>Trust title <input name="trustTitle" type="text" value="<?= manage_h($h['trustTitle'] ?? '') ?>" /></label>
           <label>Trust points (one per line) <textarea name="trustBullets"><?= manage_h(implode("\n", $h['trustBullets'] ?? [])) ?></textarea></label>

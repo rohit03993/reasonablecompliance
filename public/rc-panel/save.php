@@ -54,12 +54,24 @@ switch ($type) {
                 }
             }
         }
+        $stats = [];
+        foreach (lines_to_array((string) ($_POST['stats'] ?? '')) as $line) {
+            $parts = array_map('trim', explode('|', $line, 2));
+            if (($parts[0] ?? '') === '') {
+                continue;
+            }
+            $stats[] = [
+                'value' => $parts[0],
+                'label' => $parts[1] ?? '',
+            ];
+        }
         $data = [
             'hero' => [
                 'headline' => trim((string) ($_POST['headline'] ?? '')),
                 'subheadline' => trim((string) ($_POST['subheadline'] ?? '')),
                 'intro' => trim((string) ($_POST['intro'] ?? '')),
             ],
+            'stats' => $stats,
             'trustTitle' => trim((string) ($_POST['trustTitle'] ?? '')),
             'trustBullets' => lines_to_array((string) ($_POST['trustBullets'] ?? '')),
             'whyChooseTitle' => trim((string) ($_POST['whyChooseTitle'] ?? '')),
@@ -117,6 +129,13 @@ switch ($type) {
         break;
 
     case 'services':
+        $existing = manage_read_json('services.json');
+        $existingBySlug = [];
+        foreach (($existing['items'] ?? []) as $ex) {
+            if (!empty($ex['slug'])) {
+                $existingBySlug[$ex['slug']] = $ex;
+            }
+        }
         $items = [];
         $count = (int) ($_POST['count'] ?? 0);
         for ($i = 0; $i < $count; $i++) {
@@ -124,13 +143,15 @@ switch ($type) {
             if ($title === '') {
                 continue;
             }
+            $slug = trim((string) ($_POST["slug_$i"] ?? ''));
             $items[] = [
-                'slug' => trim((string) ($_POST["slug_$i"] ?? '')),
+                'slug' => $slug,
                 'title' => $title,
                 'summary' => trim((string) ($_POST["summary_$i"] ?? '')),
                 'seoTitle' => trim((string) ($_POST["seoTitle_$i"] ?? '')),
                 'seoDescription' => trim((string) ($_POST["seoDescription_$i"] ?? '')),
                 'order' => (int) ($_POST["order_$i"] ?? ($i + 1)),
+                'icon' => $existingBySlug[$slug]['icon'] ?? 'spark',
                 'bullets' => lines_to_array((string) ($_POST["bullets_$i"] ?? '')),
             ];
         }

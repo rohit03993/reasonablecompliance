@@ -5,18 +5,23 @@ import homepage from '../../public/data/homepage.json';
 const { finalCta } = homepage;
 ---
 
-<section class="section-pad bg-surface-alt" id="consult">
-  <div class="container-rc reveal text-center">
-    <h2 class="text-3xl font-bold sm:text-4xl" data-cms="homepage.finalCta.headline">{finalCta.headline}</h2>
-    <p class="mx-auto mt-4 max-w-2xl text-muted" data-cms="homepage.finalCta.text">{finalCta.text}</p>
+<section class="relative overflow-hidden bg-navy text-white" id="consult">
+  <div class="pointer-events-none absolute inset-0 opacity-40" aria-hidden="true">
+    <div class="absolute -left-8 top-8 h-40 w-40 rounded-full bg-emerald/30 blur-3xl animate-float"></div>
+    <div class="absolute bottom-0 right-10 h-48 w-48 rounded-full bg-emerald/20 blur-3xl animate-float-delayed"></div>
+  </div>
+  <div class="container-rc relative section-pad reveal text-center">
+    <p class="text-sm font-semibold uppercase tracking-wider text-emerald">Get started</p>
+    <h2 class="mt-2 text-3xl font-bold text-white sm:text-4xl" data-cms="homepage.finalCta.headline">{finalCta.headline}</h2>
+    <p class="mx-auto mt-4 max-w-2xl text-white/70" data-cms="homepage.finalCta.text">{finalCta.text}</p>
     <p class="mt-6">
-      <a class="font-semibold text-emerald hover:text-emerald-dark" href={`mailto:${site.email}`} data-cms="site.email" data-cms-href="site.email">
+      <a class="font-semibold text-emerald hover:text-white" href={`mailto:${site.email}`} data-cms="site.email" data-cms-href="site.email">
         {site.email}
       </a>
     </p>
     <div class="mt-8 flex flex-wrap justify-center gap-3">
-      <a href="/contact" class="btn-primary">Book Your Consultation Today</a>
-      <a href="/services" class="btn-outline">Explore Services</a>
+      <a href="/contact" class="btn-primary shadow-lg shadow-emerald/25">Book Your Consultation Today</a>
+      <a href="/services" class="btn-secondary">Explore Services</a>
     </div>
   </div>
 </section>

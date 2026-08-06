@@ -1,7 +1,11 @@
 ---
 import homepage from '../../public/data/homepage.json';
+import Icon from './Icon.astro';
 
 const { trustTitle, trustBullets, whyChooseTitle, whyChooseBullets } = homepage;
+
+const trustIcons = ['users', 'check', 'receipt', 'clock', 'file', 'spark'];
+const whyIcons = ['scale', 'clock', 'building', 'check', 'rocket', 'support'];
 ---
 
 <section class="section-pad bg-surface-alt" id="why-us">
@@ -11,9 +15,11 @@ const { trustTitle, trustBullets, whyChooseTitle, whyChooseBullets } = homepage;
       <h2 class="mt-2 text-3xl font-bold sm:text-4xl" data-cms="homepage.trustTitle">{trustTitle}</h2>
       <ul class="mt-8 space-y-3" data-cms-list="homepage.trustBullets">
         {
-          trustBullets.map((item) => (
-            <li class="flex gap-3 text-sm leading-relaxed sm:text-base">
-              <span class="mt-1.5 inline-block h-2 w-2 shrink-0 rounded-full bg-emerald" aria-hidden="true" />
+          trustBullets.map((item, index) => (
+            <li class="flex items-start gap-3 rounded-xl border border-transparent bg-white/70 px-3 py-3 text-sm leading-relaxed transition hover:border-emerald/30 hover:shadow-sm sm:text-base">
+              <span class="mt-0.5 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald/10 text-emerald">
+                <Icon name={trustIcons[index % trustIcons.length]} class="h-4 w-4" />
+              </span>
               <span>{item}</span>
             </li>
           ))
@@ -25,9 +31,11 @@ const { trustTitle, trustBullets, whyChooseTitle, whyChooseBullets } = homepage;
       <h2 class="mt-2 text-3xl font-bold sm:text-4xl" data-cms="homepage.whyChooseTitle">{whyChooseTitle}</h2>
       <ul class="mt-8 space-y-3" data-cms-list="homepage.whyChooseBullets">
         {
-          whyChooseBullets.map((item) => (
-            <li class="flex gap-3 text-sm leading-relaxed sm:text-base">
-              <span class="mt-1.5 inline-block h-2 w-2 shrink-0 rounded-full bg-emerald" aria-hidden="true" />
+          whyChooseBullets.map((item, index) => (
+            <li class="flex items-start gap-3 rounded-xl border border-transparent bg-white/70 px-3 py-3 text-sm leading-relaxed transition hover:border-emerald/30 hover:shadow-sm sm:text-base">
+              <span class="mt-0.5 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald/10 text-emerald">
+                <Icon name={whyIcons[index % whyIcons.length]} class="h-4 w-4" />
+              </span>
               <span>{item}</span>
             </li>
           ))
